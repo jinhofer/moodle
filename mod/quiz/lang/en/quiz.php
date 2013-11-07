@@ -922,3 +922,15 @@ $string['invalidnumericanswer'] = 'One of the answers you entered was not a vali
 $string['invalidnumerictolerance'] = 'One of the tolerances you entered was not a valid number.';
 $string['multiplier'] = 'Multiplier';
 $string['unusedcategorydeleted'] = 'This category has been deleted because, after deleting the course, its questions weren\'t used any more.';
+
+/* quizedit_helper strings */
+$string['helper_allgradesto'] = 'Set all grades to';
+$string['helper_setbutton'] = 'Set';
+$string['helper_savebutton'] = 'Save changed grades';
+$string['helper_jm_nochange'] = 'There are no changes to save.';
+$string['helper_je_nodetect'] = 'Error: cannot parse the form for sesskey and cmid values.';
+$string['helper_je_invalid_grade'] = 'Invalid grade value: ';
+
+// 20130204 hoang027 >>> add "internet ID" column to quiz report
+$string['internetid'] = 'Internet ID';
+// <<< 20130204 hoang027

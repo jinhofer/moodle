@@ -393,9 +393,10 @@ abstract class quiz_attempts_report_table extends table_sql {
             $fields .= "\n(CASE WHEN $this->qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
         }
 
+        // 20130204 hoang027 >>> add username field
         $extrafields = get_extra_user_fields_sql($this->context, 'u', '',
                 array('id', 'idnumber', 'firstname', 'lastname', 'picture',
-                'imagealt', 'institution', 'department', 'email'));
+                'imagealt', 'username', 'institution', 'department', 'email'));
         $allnames = get_all_user_name_fields(true, 'u');
         $fields .= '
                 quiza.uniqueid AS usageid,
@@ -404,6 +405,7 @@ abstract class quiz_attempts_report_table extends table_sql {
                 u.idnumber, ' . $allnames . ',
                 u.picture,
                 u.imagealt,
+                u.username,
                 u.institution,
                 u.department,
                 u.email' . $extrafields . ',
@@ -414,6 +416,8 @@ abstract class quiz_attempts_report_table extends table_sql {
                 CASE WHEN quiza.timefinish = 0 THEN null
                      WHEN quiza.timefinish > quiza.timestart THEN quiza.timefinish - quiza.timestart
                      ELSE 0 END AS duration';
+       // <<< 20130204 hoang027
+
             // To explain that last bit, timefinish can be non-zero and less
             // than timestart when you have two load-balanced servers with very
             // badly synchronised clocks, and a student does a really quick attempt.

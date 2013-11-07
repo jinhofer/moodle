@@ -172,14 +172,19 @@ abstract class quiz_attempts_report extends quiz_default_report {
         }
 
         if ($table->is_downloading()) {
-            $columns[] = 'institution';
-            $headers[] = get_string('institution');
+            // 20130204 hoang027 >>> remove institution and department columns, add internet ID column
+            // $columns[] = 'institution';
+            // $headers[] = get_string('institution');
 
-            $columns[] = 'department';
-            $headers[] = get_string('department');
+            // $columns[] = 'department';
+            // $headers[] = get_string('department');
 
             $columns[] = 'email';
             $headers[] = get_string('email');
+
+            $columns[] = 'username';
+            $headers[] = get_string('internetid', 'quiz');
+            // <<< 20130204 hoang027
         }
     }
 
