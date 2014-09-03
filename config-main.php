@@ -38,12 +38,12 @@ $CFG = new stdClass();
 // will be stored.  This database must already have been created         //
 // and a username/password created to access it.                         //
 
-$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'mssql', 'sqlsrv' or 'oci'
+$CFG->dbtype    = 'mysqli';      // 'pgsql', 'mariadb', 'mysqli', 'mssql', 'sqlsrv' or 'oci'
 $CFG->dblibrary = 'native';     // 'native' only at the moment
-$CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
-$CFG->dbname    = 'moodle';     // database name, eg moodle
-$CFG->dbuser    = 'username';   // your database username
-$CFG->dbpass    = 'password';   // your database password
+#$CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
+#$CFG->dbname    = 'moodle';     // database name, eg moodle
+#$CFG->dbuser    = 'username';   // your database username
+#$CFG->dbpass    = 'password';   // your database password
 $CFG->prefix    = 'mdl_';       // prefix to use for all table names
 $CFG->dboptions = array(
     'dbpersist' => false,       // should persistent database connections be
@@ -73,7 +73,7 @@ $CFG->dboptions = array(
 // If you need both intranet and Internet access please read
 // http://docs.moodle.org/en/masquerading
 
-$CFG->wwwroot   = 'http://example.com/moodle';
+#$CFG->wwwroot   = 'http://example.com/moodle';
 
 
 //=========================================================================
@@ -89,7 +89,7 @@ $CFG->wwwroot   = 'http://example.com/moodle';
 //
 // - On Windows systems you might specify something like 'c:\moodledata'
 
-$CFG->dataroot  = '/home/example/moodledata';
+#$CFG->dataroot  = '/home/example/moodledata';
 
 
 //=========================================================================
@@ -450,12 +450,12 @@ $CFG->admin = 'admin';
 // Use the following flag to completely disable the Automatic updates deployment
 // feature and hide it from the server administration UI.
 //
-//      $CFG->disableupdateautodeploy = true;
+$CFG->disableupdateautodeploy = true;
 //
 // Use the following flag to completely disable the On-click add-on installation
 // feature and hide it from the server administration UI.
 //
-//      $CFG->disableonclickaddoninstall = true;
+$CFG->disableonclickaddoninstall = true;
 //
 // Use the following flag to disable modifications to scheduled tasks
 // whilst still showing the state of tasks.
@@ -557,7 +557,7 @@ $CFG->admin = 'admin';
 //
 // When working with production data on test servers, no emails or other messages
 // should ever be send to real users
-// $CFG->noemailever = true;    // NOT FOR PRODUCTION SERVERS!
+$CFG->noemailever = true;    // NOT FOR PRODUCTION SERVERS!
 //
 // Divert all outgoing emails to this address to test and debug emailing features
 // $CFG->divertallemailsto = 'root@localhost.local'; // NOT FOR PRODUCTION SERVERS!
@@ -750,6 +750,12 @@ $CFG->admin = 'admin';
 // Note that, for now, this only used by the profiling features
 // (Development->Profiling) built into Moodle.
 //      $CFG->pathtodot = '';
+
+//=========================================================================
+// Overriding the above settings with environment-dependent settings
+//=========================================================================
+
+include_once(dirname(__FILE__) . '/config-env.php');
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
