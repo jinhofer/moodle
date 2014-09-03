@@ -594,6 +594,21 @@ $CFG->noemailever = true;    // NOT FOR PRODUCTION SERVERS!
 // Example:
 //   $CFG->forced_plugin_settings = array('pluginname'  => array('settingname' => 'value', 'settingname_locked' => true, 'settingname_adv' => true));
 //
+
+$CFG->forced_plugin_settings = array(
+     'auth/ldap'
+        => array('host_url'             => 'ldaps://ldap-dsee.umn.edu',
+                 'bind_dn'              => 'cn=Moodle System,ou=Organizations,o=University of Minnesota,c=US',
+                 'bind_pw'              => '< env config >',
+                 'contexts'             => 'o=University of Minnesota,c=US',
+                 'ldap_version'         => '3',
+                 'start_tls'            => false,
+                 'user_type'            => 'default',
+                 'search_sub'           => 'no',
+                 'opt_deref'            => 'no')
+);
+
+
 //=========================================================================
 // 9. PHPUNIT SUPPORT
 //=========================================================================
