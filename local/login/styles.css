@@ -1,0 +1,11 @@
+
+.logincontent { margin: 15px; }
+
+.logincontent .authpanel { text-align:center; }
+
+.logincontent .umnauthpanel { float:left; width: 49.5%; border-right: 1px solid #EEE; }
+
+.logincontent .guestauthpanel { float:right; width: 50%; }
+
+.logincontent .subcontent { margin: 5px; padding: 10px; }
+
