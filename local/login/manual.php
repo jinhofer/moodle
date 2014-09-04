@@ -88,9 +88,6 @@ if ($formdata = $form->get_data()) {
         unset($SESSION->lang);
     }
 
-    add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
-                   $user->id, 0, $user->id);
-
     complete_user_login($user, true); // sets the username cookie
 
     redirect($CFG->wwwroot.'/');
