@@ -1,0 +1,6 @@
+/** STRY0010016 20130823 kerzn002
+ *  Used on the enrol/manual/manage.php for adding a single user from the directory. */
+#directorysearch_caption {font-weight:bold;font-size:0.75em;}
+#directorysearch { padding-bottom:5px;}
+#directorysearch div {margin-top: 0.2em; }
+.directorysearch_help { max-width: 320px; }

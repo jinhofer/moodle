@@ -596,6 +596,18 @@ $CFG->noemailever = true;    // NOT FOR PRODUCTION SERVERS!
 //
 
 $CFG->forced_plugin_settings = array(
+    'auth/shibboleth'
+        => array('user_attribute'       => 'eppn',
+                 'alt_login'            => 'off',
+                 'convert_data'         => __DIR__.'/local/login/shib_data_manipulation.php',
+                 'logout_handler'       => 'https://ay15.moodle.umn.edu/Shibboleth.sso/Logout',
+                 'logout_return_url'    => 'https://idp2.shib.umn.edu/idp/LogoutUMN',
+                 'field_map_firstname'  => 'givenName',
+                 'field_map_lastname'   => 'surname',
+                 'field_map_email'      => 'mail',
+                 'field_map_lang'       => 'lang',
+                 'field_map_idnumber'   => 'umnEmplId',
+                 'on_shib_empty'        => __DIR__.'/local/login/shib_ldap_fallback.php'),
      'auth/ldap'
         => array('host_url'             => 'ldaps://ldap-dsee.umn.edu',
                  'bind_dn'              => 'cn=Moodle System,ou=Organizations,o=University of Minnesota,c=US',
@@ -605,9 +617,15 @@ $CFG->forced_plugin_settings = array(
                  'start_tls'            => false,
                  'user_type'            => 'default',
                  'search_sub'           => 'no',
-                 'opt_deref'            => 'no')
+                 'opt_deref'            => 'no'),
+     'local/user'
+        => array('bulk_limit'           => 1000)
 );
 
+// Some Shibboleth attributes are used directly in local/login/shib_data_manipulation.php.
+
+$CFG->alternateloginurl = '/local/login/shibpassive.php';
+$CFG->shibboleth_login_handler = 'https://ay15.moodle.umn.edu/Shibboleth.sso/Login';
 
 //=========================================================================
 // 9. PHPUNIT SUPPORT
