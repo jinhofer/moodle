@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/generic_data/db" VERSION="20110819" COMMENT="XMLDB file for Moodle local/generic_data"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="generic_set" COMMENT="General container suitable for persistent sets.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="70" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the set.  By convention, should include namespace prefix (e.g., &quot;ppsft_&quot;." PREVIOUS="id" NEXT="value"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Value of set member" PREVIOUS="name" NEXT="created"/>
+        <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Time created in epoch seconds." PREVIOUS="value"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="name_value" UNIQUE="true" FIELDS="name, value"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
