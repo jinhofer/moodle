@@ -189,18 +189,20 @@ class oci_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
-        // Make sure moodle package is installed - now required.
-        if (!$this->oci_package_installed()) {
-            try {
-                $this->attempt_oci_package_install();
-            } catch (Exception $e) {
-                // Ignore problems, only the result counts,
-                // admins have to fix it manually if necessary.
-            }
-            if (!$this->oci_package_installed()) {
-                throw new dml_exception('dbdriverproblem', 'Oracle PL/SQL Moodle support package MOODLELIB is not installed! Database administrator has to execute /lib/dml/oci_native_moodle_package.sql script.');
-            }
-        }
+// 20140908 Colin. Commented out requirement for Moodle Oracle package installation
+//                 because we use Oracle only for read-only PeopleSoft access.
+#        // Make sure moodle package is installed - now required.
+#        if (!$this->oci_package_installed()) {
+#            try {
+#                $this->attempt_oci_package_install();
+#            } catch (Exception $e) {
+#                // Ignore problems, only the result counts,
+#                // admins have to fix it manually if necessary.
+#            }
+#            if (!$this->oci_package_installed()) {
+#                throw new dml_exception('dbdriverproblem', 'Oracle PL/SQL Moodle support package MOODLELIB is not installed! Database administrator has to execute /lib/dml/oci_native_moodle_package.sql script.');
+#            }
+#        }
 
         // get unique session id, to be used later for temp tables stuff
         $sql = 'SELECT DBMS_SESSION.UNIQUE_SESSION_ID() FROM DUAL';
