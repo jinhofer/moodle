@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/instances/db" VERSION="20111006" COMMENT="XMLDB file for Moodle local/instances"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="moodle_instances" COMMENT="Moodle instances that this Moodle instance knows about.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="wwwroot"/>
+        <FIELD NAME="wwwroot" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="A URL.  The wwwroot as configured in the instance." PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the instance to be used for such things as directory names.  Use wwwroot starting from the domain name and replace any forward slashes with underscores." PREVIOUS="wwwroot" NEXT="isupgradeserver"/>
+        <FIELD NAME="isupgradeserver" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indicates whether the instance can be used to convert courses from Moodle version 1.9 to 2.0." PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="wwwroot" UNIQUE="true" FIELDS="wwwroot" COMMENT="unique wwwroot" NEXT="name"/>
+        <INDEX NAME="name" UNIQUE="true" FIELDS="name" COMMENT="Unique name" PREVIOUS="wwwroot"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

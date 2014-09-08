@@ -1,0 +1,8 @@
+input[type="text"][name="wwwroot"] { width:320px; }
+
+.path-admin-local-instances .mform .fitem { margin-top:15px; }
+.path-admin-local-instances .mform .fstatic { font-weight:bold; color:gray; }
+
+.path-admin-local-instances .mform .fitem .fitemtitle { width:18%; }
+.path-admin-local-instances .mform .fitem .felement { margin-left:20%; }
+
