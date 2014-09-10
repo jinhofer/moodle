@@ -622,10 +622,21 @@ $CFG->forced_plugin_settings = array(
         => array('bulk_limit'           => 1000)
 );
 
+//================================================================
+// UMN CUSTOM CONFIGURATION
+//================================================================
+
 // Some Shibboleth attributes are used directly in local/login/shib_data_manipulation.php.
 
 $CFG->alternateloginurl = '/local/login/shibpassive.php';
 $CFG->shibboleth_login_handler = 'https://ay15.moodle.umn.edu/Shibboleth.sso/Login';
+
+// PeopleSoft database connection parameters.
+// Exadata data warehouse connection
+$CFG->ppsft_dbhost = '';
+$CFG->ppsft_dbuser = 'mdlsys';
+$CFG->ppsft_dbpass = '< env config >';
+$CFG->ppsft_dbname = 'dwprd.oit';
 
 //=========================================================================
 // 9. PHPUNIT SUPPORT

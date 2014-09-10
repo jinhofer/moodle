@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/ppsft/db" VERSION="20140118" COMMENT="XMLDB file for Moodle local/ppsft"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="ppsft_classes" COMMENT="Contains U of M PeopleSoft classes." NEXT="ppsft_class_instr">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="term"/>
+        <FIELD NAME="term" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="This is &quot;strm&quot; in the PeopleSoft database.  It consists of 4 digits.  The first three represent the number of years since 1900.  The last digit is 3 for Spring term, 5 for Summer, and 9 for Fall.  For example, 1113 is Spring semester of 2011." PREVIOUS="id" NEXT="institution"/>
+        <FIELD NAME="institution" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false" COMMENT="For example, UMNCR, UMNDL, UMNMO, UMNTC, UMNWA." PREVIOUS="term" NEXT="class_nbr"/>
+        <FIELD NAME="class_nbr" TYPE="int" LENGTH="6" NOTNULL="true" SEQUENCE="false" COMMENT="Along with the term and institution, this uniquely identifies a U of M PeopleSoft class section." PREVIOUS="institution" NEXT="subject"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="8" NOTNULL="true" SEQUENCE="false" COMMENT="The short, uppercase subject of the class.  For example, BIOL." PREVIOUS="class_nbr" NEXT="catalog_nbr"/>
+        <FIELD NAME="catalog_nbr" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="For a course in the catalog as &quot;BIOL 1012&quot;, this field holds the 1012 part." PREVIOUS="subject" NEXT="section"/>
+        <FIELD NAME="section" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="This corresponds to field class_section in the PeopleSoft schema." PREVIOUS="catalog_nbr" NEXT="descr"/>
+        <FIELD NAME="descr" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" COMMENT="Used as a short title for the UMN class in Moodle customizations." PREVIOUS="section" NEXT="long_title"/>
+        <FIELD NAME="long_title" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Comes from course_title_long in the PeopleSoft ps_crse_catalog table." PREVIOUS="descr" NEXT="enrol_updated"/>
+        <FIELD NAME="enrol_updated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Contains the time of the most recent full update of table ppsft_class_enrol from PeopleSoft for a class.  Using epoch time in accordance with Moodle convention." PREVIOUS="long_title"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="triplet" UNIQUE="true" FIELDS="term, institution, class_nbr" COMMENT="This is intended to ensure uniqueness of triplets (term, institition, class_nbr) and provide fast look."/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="ppsft_class_instr" COMMENT="Associates users with U of M PeopleSoft classes as instructors." PREVIOUS="ppsft_classes" NEXT="ppsft_class_enrol">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to the id column of user table." PREVIOUS="id" NEXT="ppsftclassid"/>
+        <FIELD NAME="ppsftclassid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to ppsft_class table.  This is not a PeopleSoft field." PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="userid refers to id column in user table" PREVIOUS="primary" NEXT="ppsftclassid"/>
+        <KEY NAME="ppsftclassid" TYPE="foreign" FIELDS="ppsftclassid" REFTABLE="ppsft_classes" REFFIELDS="id" COMMENT="ppsftclassid refers to id column in ppsft_classes table" PREVIOUS="userid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="user_class" UNIQUE="true" FIELDS="userid, ppsftclassid" COMMENT="Unique index on user and class"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="ppsft_class_enrol" COMMENT="Associates users with U of M PeopleSoft classes as students." PREVIOUS="ppsft_class_instr" NEXT="ppsft_terms">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to user table." PREVIOUS="id" NEXT="ppsftclassid"/>
+        <FIELD NAME="ppsftclassid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to ppsft_class table.  This is not a PeopleSoft field." PREVIOUS="userid" NEXT="status"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Mostly from PeopleSoft stdnt_enrl_status.  E = Enrolled; D = Drop.  We also use 'H' for withdrawn.  PeopleSoft indicates withdrawn with stdnt_enrl_status=E and enrl_drop_dt not null.  Not using 'W' because PeopleSoft uses that for wait-listed and so could be confusing." PREVIOUS="ppsftclassid" NEXT="add_date"/>
+        <FIELD NAME="add_date" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="This comes from the PeopleSoft enrl_add_dt in ps_stdnt_enrl." PREVIOUS="status" NEXT="drop_date"/>
+        <FIELD NAME="drop_date" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="This comes from the PeopleSoft enrl_drop_dt in ps_stdnt_enrl." PREVIOUS="add_date" NEXT="vanished"/>
+        <FIELD NAME="vanished" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="If not null, indicates that the corresponding ppsft enrollment record has vanished.  The value is the time at which Moodle detects that the record is missing." PREVIOUS="drop_date" NEXT="grading_basis"/>
+        <FIELD NAME="grading_basis" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="A-F" SEQUENCE="false" COMMENT="Stores the value from grading_basis_enrl from PeopleSoft table ps_stdnt_enrl." PREVIOUS="vanished"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="userid refers to the id column in the user table" PREVIOUS="primary" NEXT="ppsftclassid"/>
+        <KEY NAME="ppsftclassid" TYPE="foreign" FIELDS="ppsftclassid" REFTABLE="ppsft_classes" REFFIELDS="id" COMMENT="ppsftclassid refers to the id column in the ppsft_classes table" PREVIOUS="userid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="class_user" UNIQUE="true" FIELDS="ppsftclassid, userid" COMMENT="Unique index on PeopleSoft class id and user id"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="ppsft_terms" COMMENT="Each record represents a PeopleSoft academic term." PREVIOUS="ppsft_class_enrol">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="term"/>
+        <FIELD NAME="term" TYPE="char" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="The PeopleSoft 4-digit term identifier" PREVIOUS="id" NEXT="term_name"/>
+        <FIELD NAME="term_name" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the PeopleSoft academic term.  For example, &quot;Spring 2011&quot;." PREVIOUS="term"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
