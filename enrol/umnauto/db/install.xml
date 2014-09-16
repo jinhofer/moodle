@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="enrol/umnauto/db" VERSION="20121213" COMMENT="XMLDB file for Moodle enrol/umnauto"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_umnauto_course" COMMENT="Contains course-level auto-enrollment settings." NEXT="enrol_umnauto_classes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key to mdl_course table." PREVIOUS="id" NEXT="auto_drop"/>
+        <FIELD NAME="auto_drop" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="Non-zero if the auto-enrollment process should unenroll students dropped from a PeopleSoft class." PREVIOUS="courseid" NEXT="auto_withdraw"/>
+        <FIELD NAME="auto_withdraw" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="Non-zero if the auto-enrollment process should unenroll students withdrawn from a PeopleSoft class." PREVIOUS="auto_drop" NEXT="auto_group"/>
+        <FIELD NAME="auto_group" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="whether groups will be automatically created and updated based on associated PeopleSoft sections" PREVIOUS="auto_withdraw" NEXT="autogroup_option"/>
+        <FIELD NAME="autogroup_option" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="e.g. having &quot;term&quot; as part of auto-group name" PREVIOUS="auto_group"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="courseid"/>
+        <KEY NAME="courseid" TYPE="foreign-unique" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" COMMENT="courseid refers to id column in course table" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_umnauto_classes" COMMENT="Associates enrollment instances (probably one per course site) with PeopleSoft classes." PREVIOUS="enrol_umnauto_course">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="enrolid"/>
+        <FIELD NAME="enrolid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key to the enrol table." PREVIOUS="id" NEXT="ppsftclassid"/>
+        <FIELD NAME="ppsftclassid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key to the ppsft_class table." PREVIOUS="enrolid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="enrolid"/>
+        <KEY NAME="enrolid" TYPE="foreign" FIELDS="enrolid" REFTABLE="enrol" REFFIELDS="id" COMMENT="Foreign key to the id column in the enrol table" PREVIOUS="primary" NEXT="ppsftclassid"/>
+        <KEY NAME="ppsftclassid" TYPE="foreign" FIELDS="ppsftclassid" REFTABLE="ppsft_classes" REFFIELDS="id" COMMENT="Foreign key to the id column in the ppsft_classes table." PREVIOUS="enrolid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="enrol_ppsftclass" UNIQUE="true" FIELDS="enrolid, ppsftclassid" COMMENT="Unique index on enrolid and ppsftclassid."/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,39 @@
+/* umnauto styles */
+#page-admin-setting-enrolsettingsumnauto td.button { 
+    text-align:center; 
+}
+
+#autoenrolltables table { margin-left:auto; margin-right:auto; } 
+
+div.autoenrollupdate { margin-bottom:2em; text-align:center }
+
+div.tablecaption { 
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+table td.ppsftstatus { color:green; }
+table tr.ppsftdropped   td.ppsftstatus { color:red; }
+table tr.ppsftwithdrawn td.ppsftstatus { color:red; }
+
+table td.mdlstatus { color:green; }
+table tr.mdlnotenrolled td.mdlstatus { color:red; }
+
+table td.enrolcount { text-align:right; }
+
+#instructionstext em { font-weight:bold; font-style:normal; }
+#instructionstext strong { font-weight:bold; color:red; font-style:normal; }
+
+#errorstext { font-weight:bold; color:red; }
+
+div.studenttabletitle { 
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+table td.empty_enrollment { text-align:center; font-weight:bold; color:red;}
