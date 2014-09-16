@@ -64,7 +64,6 @@ catch (Exception $e) {
 
 if (! is_null($moodle_id) and $moodle_id != -1) {
     $json = array('status' => 'OK', 'user' => $search);
-    add_to_log($courseid, 'user', 'create', $PAGE->url->get_path(), "$search ($moodle_id)");
 }
 else {
     // This would happen if the user does not have the user:createfromdirectory capability in this course context.

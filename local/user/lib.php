@@ -243,10 +243,9 @@ class local_user_creator {
 
         $user_id = $DB->insert_record('user', $user); // exceptions (e.g. duplicate, ...) bubble up
 
-        // add default messaging prefs
         $new_user = $DB->get_record('user', array('id' => $user_id));
 
-        events_trigger('user_created', $new_user);
+        \core\event\user_created::create_from_userid($user_id)->trigger();
 
         return $user_id;
     }
