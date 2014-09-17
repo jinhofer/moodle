@@ -43,7 +43,11 @@ if ($form->is_cancelled()) {
 
     $DB->delete_records('moodle_instances', array('id' => $id));
 
-    events_trigger('local_instances_instance_deleted', $instance);
+    // Trigger a course category deleted event.
+    $event = \local_instances\event\instance_deleted::create(array(
+        'objectid' => $id
+    ));
+    $event->trigger();
 
     redirect($returnurl);
 }

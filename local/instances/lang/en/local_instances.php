@@ -17,3 +17,6 @@ $string['instancename']    = 'Instance name';
 $string['isupgradeserver'] = 'Is upgrade server';
 $string['action']          = 'Edit';
 
+$string['wwwrootinvalid'] = 'The wwwroot value is not valid';
+
+$string['eventinstancedeleted'] = 'Moodle instance entry has been deleted';
