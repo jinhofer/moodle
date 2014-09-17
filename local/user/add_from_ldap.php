@@ -38,7 +38,7 @@ $json = array();
 
 try {
     // Verify that the user is authorized in this context.
-    if (has_capability('local/user:createfromdirectory', get_context_instance(CONTEXT_COURSE, $courseid))) {
+    if (has_capability('local/user:createfromdirectory', context_course::instance($courseid))) {
         $moodle_id = $uc->create_from_x500($search);
     }
 }
