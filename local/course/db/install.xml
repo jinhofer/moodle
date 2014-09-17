@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/course/db" VERSION="20140710" COMMENT="XMLDB file for Moodle local/course"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="course_request_u" COMMENT="course requests for UMN">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="fullname" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="reason" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="requesterid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sourcecourseurl" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="Requestor can provide a URL for an existing course with which to initialize for the new course."/>
+        <FIELD NAME="copyuserdata" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indicates whether to copy user data from the course at sourcecourseurl."/>
+        <FIELD NAME="backupfile" TYPE="char" LENGTH="254" NOTNULL="false" SEQUENCE="false" COMMENT="The backupfile which is to be restored into the new course.  Does not apply in the case of synchronously backing up and restoring courses from the same server."/>
+        <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indicates the status of a course request.  A value of zero indicates a new request.  See PHP constants with prefix CRS_REQ_STATUS_ for more."/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the category the requested course belongs in.  Value used for field of same name in course table."/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign key to the course table.  The course resulting from the approval of this request."/>
+        <FIELD NAME="sections" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The section numbers of the ppsft classes that the user is requesting be associated with this course.  This is intended only for presentation as-is on the pending course request page and only relevant for academic requests submitted by a user who is not an official instructor for the ppsft course."/>
+        <FIELD NAME="callnumbers" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Call numbers of the ppsft classes that the user is requesting be associated with this course.  Intended only for display on the pending course request page and only relevant for academic requests submitted by a user who is not an official instructor for the ppsft course."/>
+        <FIELD NAME="requestform" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Indicates which form the requester used: nonacad, acad."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="requesterid" REFTABLE="user" REFFIELDS="id" COMMENT="requesterid points to user table id field"/>
+        <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="course_categories" REFFIELDS="id" COMMENT="categoryid points to course_categories id field"/>
+        <KEY NAME="courseid" TYPE="unique" FIELDS="courseid" COMMENT="courseid points to course table's id field"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="shortname" UNIQUE="false" FIELDS="shortname"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="course_request_users" COMMENT="Users to have role assignments in the requested course.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courserequestid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to course_request_u table id column."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to the user table."/>
+        <FIELD NAME="roleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to role table id column."/>
+        <FIELD NAME="sendemail" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Indicates whether user should receive emails related to this course request."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="courserequestid" TYPE="foreign" FIELDS="courserequestid" REFTABLE="course_request_u" REFFIELDS="id" COMMENT="courserequestid points to course_request_u id field"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="userid points to user table's id field"/>
+        <KEY NAME="roleid" TYPE="foreign" FIELDS="roleid" REFTABLE="role" REFFIELDS="id" COMMENT="roleid points to role table's id field"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_request_classes" COMMENT="PeopleSoft classes to be associated with requested class.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courserequestid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to course_request_u table id column."/>
+        <FIELD NAME="ppsftclassid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to ppsft_classes table id column."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="courserequestid" TYPE="foreign" FIELDS="courserequestid" REFTABLE="course_request_u" REFFIELDS="id" COMMENT="courserequestid points to the course_request_u table's id field"/>
+        <KEY NAME="ppsftclassid" TYPE="foreign" FIELDS="ppsftclassid" REFTABLE="ppsft_classes" REFFIELDS="id" COMMENT="ppsftclassid points to the id field of the ppsft_classes table."/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_request_category_map" COMMENT="Maps course request attributes to categories.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The category to which the other values in the row map.  Points to the id column of the course_categories table."/>
+        <FIELD NAME="display" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indicates whether the category should be displayed on the request form."/>
+        <FIELD NAME="allowrequest" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indicates whether a user should be able to request a course for this category."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_request_servers" COMMENT="Lists servers that can participate in course migrations associated with course requests.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="requestinginstanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to moodle_instances for the instance that will send requests."/>
+        <FIELD NAME="sourceinstanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to the moodle_instances table for instance that has a course being requested for migration."/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Indicates whether the migration path is permitted to be used."/>
+        <FIELD NAME="upgradeinstanceid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign key to moodle_instances for the upgrade instance to be used for this migration path."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="course_request_category_conf" COMMENT="Course request category theme/template settings.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the category this setting applies to."/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Setting name"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Setting value"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

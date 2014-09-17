@@ -638,6 +638,9 @@ $CFG->ppsft_dbuser = 'mdlsys';
 $CFG->ppsft_dbpass = '< env config >';
 $CFG->ppsft_dbname = 'dwprd.oit';
 
+// For migrating courses from one instance to another.
+$CFG->migration_base_dir = '/nfs/migration/transfer';
+
 //=========================================================================
 // 9. PHPUNIT SUPPORT
 //=========================================================================

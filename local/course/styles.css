@@ -1,0 +1,186 @@
+
+.addrowsorlookup span { cursor: pointer; }
+.addrowsorlookup img { vertical-align:text-bottom; margin-right:0.5em; width:18px; height:18px; }
+.addrowsorlookup { margin-bottom:3px; }
+
+/* Start ppsftsearch in course request forms. */
+
+body.path-local-course h2.searchtypeheading { text-align:left; }
+body.path-local-course #subjecttable input, body.path-local-course #subjecttable select { margin-bottom: 0; }
+body.path-local-course #classnumbertable input, body.path-local-course #classnumbertable select { margin-bottom: 0; }
+
+.searchbuttondiv { text-align:right; padding-right:20px; }
+body.path-local-course .searchbuttondiv input { padding:1px 10px; }
+body.path-local-course .previousbuttondiv button { margin-right:33px; }
+
+.myclasses form { position:relative; }
+.myclasses .searchbuttondiv { margin:3px; position:absolute; right:0; bottom:0; }
+
+.searchbox table { margin-bottom:0; }
+.searchbox th { text-align:left; padding:1px 5px; font-weight:normal; color:#a00; }
+.searchbox tbody td { padding:1px 3px; vertical-align:middle; }
+.searchbox tfoot td { font-size:88%; color:#444; padding:0 5px; vertical-align:top; }
+.searchbox div.addanotherrow { margin-top:0.5em; }
+
+.searchbox .errormessage, #classselectform .errormessage { font-size:110%; color:#a00; margin-top:0.5em;}
+
+.searchbox { width:32em; }
+#subjecttable select { width: 10em; }
+#subjecttable input.subject { width: 4em; }
+#subjecttable input.catalog { width: 5em; }
+
+#classnumbertable input.classnumber { width: 5em; }
+
+#classselectformdiv { margin: 30px auto 30px auto; max-width:900px; }
+#classselectformdiv, #classselectform { display:block; }
+#classselectform .prevnextbuttons { text-align:right; }
+#classselectform .prevnextbuttons button { min-width:8em; }
+
+#ppsftsearchinstructions { max-width:32em; }
+#ppsftsearchresultinstructions { max-width:900px; margin-left: auto; margin-right: auto; }
+
+#ppsftsearchresulttable th { text-align:left; vertical-align:middle; }
+#ppsftsearchresulttable th.header, #ppsftsearchresulttable td.header,
+#ppsftsearchresulttable div.header, #ppsftsearchresulttable .navbar {
+    border-color: #DDDDDD;
+}
+#ppsftsearchresulttable .header { background: none repeat scroll 0 0 #EBEBEB; }
+
+/* End ppsftsearch in course request forms. */
+
+/* requestgateway */
+#page-local-course-requestgateway .block,#page-local-course-ppsftsearch .block { padding: 10px 10px; }
+#page-local-course-requestgateway .box { max-width: 600px; }
+#page-local-course-requestgateway .requestformlinkscontainer {  text-align: center; margin-top: -1em; }
+#page-local-course-requestgateway .requestformlinks { display: inline-block; padding: 10px; max-width: 300px; border: 1px solid #DDDDDD; border-radius: 3px; }
+
+/* requestconfirmation */
+
+div.requestconfirmationcontainer { text-align:center; margin-bottom:30px; }
+div.requestconfirmationcontainer .message { width:100%; text-align:left; margin:5px 10px 20px 10px; }
+div.requestconfirmation { display:inline-block; text-align:center; margin:5px 30px; width:50%; }
+
+/* Start main request form (includes edit form, also) */
+
+#depth3div { display:none; }
+#depth3div.hasitems { display:block; }
+
+#requestheaderclasses { width: auto; border-width:0; background-color:transparent; margin:3px 0; }
+#requestheaderclasses tr { border-width:0; background-color:transparent; }
+#requestheaderclasses td { border-width:0; background-color:transparent; padding:2px .5em 1px 0;}
+#requestheaderclasses td.c0 { padding-right:0;}
+
+#acadrequestformheader { color:#333; font-weight:bold; margin-bottom:5px; }
+#acadrequestformheader .helpnote { font-size:88%; color:#444; font-weight:normal; }
+
+#acadrequestdisclaimer { color:#333; font-size:88%; font-weight:bold; margin-bottom:10px; }
+#acadrequestdisclaimer .disclaimerhead { color:#000; font-size:110%; }
+
+#id_requestformfieldset .fitem .felement { margin:0; padding:0; }
+#id_requestformfieldset legend { display: none; }
+#id_requestformfieldset { border-width:0; padding:0; margin:0; }
+#id_requestformfieldset .fitemtitle { width:auto; text-align:left; margin: 0 10px 0 0; }
+#id_requestformfieldset .felement { width:auto; }
+#id_requestformfieldset select { margin:0; }
+#id_requestformfieldset .helpnote, #page-local-course-edit_request .helpnote { font-size:88%; color:#444; }
+#id_requestformfieldset .elementwrapper.helpnote { margin-top:4px; }
+#id_requestformfieldset #additionalrolesdiv #fitem_id_rolediv_add { display:none; }
+
+body.path-local-course #fgroup_id_buttons,
+body.path-local-course #fgroup_id_buttons+div.fdescription { clear: right; overflow: hidden; text-align:left; width:98%; margin: 10px 0 !important; }
+
+/* End main request form */
+
+div.classesheader { width:100%; }
+
+div.classnotlisted { font-weight:bold; text-decoration:underline;
+text-align:center; }
+
+table.ppsftclasslist { margin-top:20px; margin-left:auto; margin-right:auto; }
+
+table.ppsftclasslist td, table.ppsftclasslist th { padding: 3px 10px; }
+
+/* Small padding on right to prevent checkbox from being cut off. */
+table.ppsftclasslist td div.fcheckbox { padding:0 1px 0 0; }
+
+table.pendingcourserequests td.url { word-wrap:break-word; max-width:80px; }
+table.pendingcourserequests { font-size:80%; }
+
+table.categorymap div.fitem div.felement { margin: 0; }
+table.categorymap tr { height: 2em; }
+table.categorymap td { padding: 0.1em 0.5em; }
+
+table.categorymap { font-size: 85%; }
+
+table.categorymap .fitem_fcheckbox .fitemtitle { width:auto; }
+table.categorymap .fitem_fcheckbox .fcheckbox { width:auto; }
+
+div.coursecache { margin-bottom:10px; }
+div.coursecache .cm_ok { color:blue; padding-left:10px; }
+div.coursecache .cm_error { margin:5px; color:red; }
+div.coursecache .cm_error .cachedcm { margin:5px; color:black; white-space:pre; }
+
+#migrationserverinfoeditdelete .fitem { margin-top:10px; }
+#migrationserverinfoeditdelete .fstatic { font-weight:bold; color:gray; }
+#migrationserverinfoeditdelete .fitemtitle { width:23%; }
+#migrationserverinfoeditdelete .felement { margin-left:25%; }
+
+#additionalrolesdiv { margin: 0; line-height: 2em; }
+#additionalrolesdiv .fitem_fcheckbox { margin: 0; }
+#additionalrolesdiv input[type=checkbox] { margin: 0; }
+
+#page-local-course-request .mform .required { color: #AA0000; max-width: 700px; margin-left: auto; margin-right: auto; }}
+#page-local-course-request .fcheckbox span { vertical-align: middle; white-space: nowrap; }
+#page-local-course-request .fcheckbox label { margin: 0; vertical-align: middle; }
+#page-local-course-request .fitem.fitem_ftext, .fitem.fitem_ftextarea { margin-bottom: 0 !important; }
+#page-local-course-request .felement input, #page-local-course-request .felement textarea { margin-bottom: 0 !important; }
+#page-local-course-request .fitem.required .fitemtitle { margin: 0 10px 0 0; width: auto !important; }
+#page-local-course-request .fitem.required .ftext.error { float: none !important; }
+
+/*body.path-local-course .generaltable { min-width: 800px !important; }*/
+#ppsftsearchresulttable { min-width: 800px; }
+body.path-local-course .generaltable .cell { border-color: #CCCCCC; border-style: solid; border-width: 1px; }
+
+@media (min-width: 768px) {
+    #page-local-course-ppsftsearch .mform, #page-local-course-request .mform { max-width: 700px; margin-left: auto; margin-right: auto; }
+    #id_requestformfieldset select { min-width:300px; }
+    #id_requestformfieldset #additionalrolesdiv { float:left; clear:both; width:100%; }
+    #id_requestformfieldset .additionalroleselectdiv { width:25%; }
+    #id_requestformfieldset .additionalroleselectdiv select { min-width:100px; }
+    #id_requestformfieldset .elementwrapper.additionalroleuserlistdiv { position:relative; clear:none; width:75% }
+    #id_requestformfieldset .elementwrapper.additionalroleuserlistdiv .ftext input { width:375px; }
+
+    /* 2.6 defaults to inline-block */
+    #id_requestformfieldset label { display: inline; }
+
+    #page-local-course-requestgateway .box { width: 66%; margin-left: auto; margin-right: auto; }
+    #page-local-course-edit_request .elementwrapper { width:100%; margin-top:10px; }
+
+    #fullnamediv .ftext input { width:375px;; }
+    #fullnamediv.elementwrapper { width:55%}
+
+    #shortnamediv .ftext input { width:20em; }
+
+    #sourcecourseurldiv { width:100%; }
+    #sourcecourseurldiv input { width:98%; }
+
+    #courserequestsupportdiv { width:100%; }
+    #courserequestsupportdiv textarea { width:98%; }
+
+    #ppsftsearchinstructions { margin-left: auto; margin-right: auto; }
+    #page-local-course-ppsftsearch .block, #page-local-course-request .block { margin-left: auto; margin-right: auto; }
+    #page-local-course-ppsftsearch .previousbuttondiv, #page-local-course-request .previousbuttondiv { max-width:490px; text-align:right; margin: 0 auto 1em auto; }
+}
+
+@media (min-width: 900px) {
+    #id_requestformfieldset .elementwrapper { float:left; clear:both; margin-top:10px; }
+    #shortnamediv.elementwrapper { clear:none; margin-left:10px; width:40%}
+    #id_requestformfieldset .additionalroleuserlistdiv .fitem_fcheckbox { width:100px; position:absolute; bottom: 0; right:2%; }
+}
+
+@media (min-width: 1200px) {
+    #page-local-course-request #fgroup_id_buttons,
+    #page-local-course-request #fgroup_id_buttons+div.fdescription,
+    #page-local-course-ppsftsearch #fgroup_id_buttons,
+    #page-local-course-ppsftsearch #fgroup_id_buttons+div.fdescription { text-align:right;}
+}
