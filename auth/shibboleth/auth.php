@@ -47,6 +47,11 @@ class auth_plugin_shibboleth extends auth_plugin_base {
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
+     * 20110909 Colin.  The core code appears to call this user_login twice
+     * for each login.  First, auth/shibboleth/index.php calls it before
+     * calling authenticate_user_login and then authenticate_user_login calls
+     * it. The $username and $password parameters are set in auth/shibboleth/index.php.
+     *
      * @param string $username The username (with system magic quotes)
      * @param string $password The password (with system magic quotes)
      * @return bool Authentication success or failure.

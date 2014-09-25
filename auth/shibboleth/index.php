@@ -48,6 +48,49 @@
         // changes to the Shibboleth plugin and it is actually used.
         $frm->password = generate_password(8);
 
+        // 20110909 Colin UMN-specific. Check to see if username does not exist but emplid
+        //     (idnumber) does exist under a different username. If so, change the username on
+        //     that record to the new username. We do this because usernames can change.
+        //     Check first to ensure shibboleth and "@umn.edu". This should be rare but happens
+        //     when users change their UMN login id and when users have two LDAP identities
+        //     that IDM is not able to combine.
+        if (!$DB->record_exists('user',
+                                array('username'   => $frm->username,
+                                      'mnethostid' => $CFG->mnet_localhost_id)))
+        {
+            // idnumber must map to whatever Shibboleth attribute contains the emplid (UMN).
+            $emplid = $_SERVER[$pluginconfig->field_map_idnumber];
+
+            if ($existinguser = $DB->get_record('user',
+                                                array('idnumber'   => $emplid,
+                                                      'mnethostid' => $CFG->mnet_localhost_id,
+                                                      'auth'       => $shibbolethauth->authtype)))
+            {
+                if (   preg_match('/@umn.edu$/', $frm->username)
+                    && preg_match('/@umn.edu$/', $existinguser->username)
+                    && preg_match('/^\d\d\d+$/', $existinguser->idnumber))
+                {
+                    error_log("Changing username to $frm->username in auth/shibboleth/index.php for " .
+                                print_r($existinguser, true));
+
+                    $oldusername = $existinguser->username;
+                    $existinguser->username = $frm->username;
+                    require_once($CFG->dirroot.'/user/lib.php');
+                    user_update_user($existinguser, false);
+
+                    // Send an email to support so that somebody can investigate, if necessary.
+                    $supportuser = core_user::get_support_user();
+                    $subject = "Automatic Moodle username change: $oldusername to $frm->username";
+                    email_to_user($supportuser,
+                                  $supportuser,
+                                  $subject,
+                                  "$subject based on emplid (idnumber) match in auth/shibboleth/index.php. "
+                                  . "Site: $CFG->wwwroot");
+                }
+            }
+        }
+        // End of UMN-specific change to handle changing username.
+
     /// Check if the user has actually submitted login data to us
 
         if ($shibbolethauth->user_login($frm->username, $frm->password)
