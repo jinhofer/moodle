@@ -591,6 +591,7 @@ $cache = '.var_export($cache, true).';
                 self::load_classes($plugintype.'_'.$pluginname, "$fulldir/classes");
             }
         }
+        ksort(self::$classmap);
     }
 
     /**
@@ -859,6 +860,22 @@ $cache = '.var_export($cache, true).';
         } else {
             return (bool)preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
         }
+    }
+
+    /**
+     * Normalize the component name.
+     *
+     * Note: this does not verify the validity of the plugin or component.
+     *
+     * @param string $component
+     * @return string
+     */
+    public static function normalize_componentname($componentname) {
+        list($plugintype, $pluginname) = self::normalize_component($componentname);
+        if ($plugintype === 'core' && is_null($pluginname)) {
+            return $plugintype;
+        }
+        return $plugintype . '_' . $pluginname;
     }
 
     /**

@@ -3602,9 +3602,20 @@ function fullname($user, $override=false) {
     if (isset($CFG->fullnamedisplay)) {
         $template = $CFG->fullnamedisplay;
     }
-    // If the template is empty, or set to language, or $override is set, return the language string.
-    if (empty($template) || $template == 'language' || $override) {
+    // If the template is empty, or set to language, return the language string.
+    if ((empty($template) || $template == 'language') && !$override) {
         return get_string('fullnamedisplay', null, $user);
+    }
+
+    // Check to see if we are displaying according to the alternative full name format.
+    if ($override) {
+        if (empty($CFG->alternativefullnameformat) || $CFG->alternativefullnameformat == 'language') {
+            // Default to show just the user names according to the fullnamedisplay string.
+            return get_string('fullnamedisplay', null, $user);
+        } else {
+            // If the override is true, then change the template to use the complete name.
+            $template = $CFG->alternativefullnameformat;
+        }
     }
 
     $requirednames = array();
@@ -5716,7 +5727,7 @@ function get_mailer($action='get') {
  * @param string $subject plain text subject line of the email
  * @param string $messagetext plain text version of the message
  * @param string $messagehtml complete html version of the message (optional)
- * @param string $attachment a file on the filesystem, relative to $CFG->dataroot
+ * @param string $attachment a file on the filesystem, either relative to $CFG->dataroot or a full path to a file in $CFG->tempdir
  * @param string $attachname the name of the file (extension indicates MIME)
  * @param bool $usetrueaddress determines whether $from email address should
  *          be sent out. Will be overruled by user profile setting for maildisplay
@@ -5888,7 +5899,16 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         } else {
             require_once($CFG->libdir.'/filelib.php');
             $mimetype = mimeinfo('type', $attachname);
-            $mail->addAttachment($CFG->dataroot .'/'. $attachment, $attachname, 'base64', $mimetype);
+
+            $attachmentpath = $attachment;
+
+            // If the attachment is a full path to a file in the tempdir, use it as is,
+            // otherwise assume it is a relative path from the dataroot (for backwards compatibility reasons).
+            if (strpos($attachmentpath, $CFG->tempdir) !== 0) {
+                $attachmentpath = $CFG->dataroot . '/' . $attachmentpath;
+            }
+
+            $mail->addAttachment($attachmentpath, $attachname, 'base64', $mimetype);
         }
     }
 
