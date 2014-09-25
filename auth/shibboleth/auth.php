@@ -80,13 +80,45 @@ class auth_plugin_shibboleth extends auth_plugin_base {
 
             return (strtolower($_SERVER[$this->config->user_attribute]) == strtolower($username));
         } else {
+
+            // SDLC-82172 20110422 Colin. Allow fall-back auth in case client
+            //      does not support Shibboleth.  Intended for third-party desktop
+            //      clients.  Typically, the third-party plugins that they communicate
+            //      with call authenticate_user_login.  Be careful to
+            //      coordinate with logic in caller (authenticate_user_login).
+            if (isset($this->config->on_shib_empty)
+                && $this->config->on_shib_empty != ''
+                && is_readable($this->config->on_shib_empty))
+            {
+                // We get this far only if we have a readable file to execute.
+
+                // But we could be here without the user existing and having
+                // 'shibboleth' auth value.  If the user does exist and have
+                // auth='shibboleth' then run on_shib_empty.
+                global $DB;
+                $auth = $DB->get_field('user', 'auth', array('username'=>$username));
+                if ($auth == $this->authtype) {  // should be shibboleth
+                    $result = false;
+                    include($this->config->on_shib_empty);
+                    return $result;
+                }
+            }
+
             // If we are not, the user has used the manual login and the login name is
             // unknown, so we return false.
             return false;
         }
     }
 
-
+    // SDLC-82172 20110423 Colin. If the Shibboleth user attribute is
+    //      not set, then probably we authenticated through on_shib_empty.
+    //      In that case, we shouldn't attempt to synchronize anything.
+    function is_synchronised_with_external() {
+        if (empty($_SERVER[$this->config->user_attribute])) {
+            return false;
+        }
+        return parent::is_synchronised_with_external();
+    }
 
     /**
      * Returns the user information for 'external' users. In this case the
