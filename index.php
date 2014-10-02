@@ -53,6 +53,11 @@
         user_accesstime_log();
     }
 
+    // STSK0011171. 20140220 Colin. Prevent guest and not-logged-in from accessing main page.
+    if (! isloggedin() or isguestuser() ) {
+        redirect(new moodle_url(get_login_url()));
+    }
+
     $hassiteconfig = has_capability('moodle/site:config', context_system::instance());
 
 /// If the site is currently under maintenance, then print a message

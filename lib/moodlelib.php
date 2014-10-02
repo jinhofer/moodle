@@ -3133,6 +3133,22 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             if ($setwantsurltome) {
                 $SESSION->wantsurl = qualified_me();
             }
+
+            // STSK0011171. 20140220 Colin. One scenario for arriving here is that of a
+            // guest user who attempts to access a course that does not allow guest access.
+            // In that case, we want to send them to the login page. This requires that our
+            // $CFG->alternateloginurl prevent redirect looping by sending guest users
+            // to an actual login page.
+            // Another scenario for arriving here is that the course allows guest access
+            // but requires a password.  We exclude guest users in this scenario from being sent
+            // to the login page.  Instead, we fall through to enrol/index.php, which should
+            // present the guest password entry form in this case.
+            // TODO: Consider whether this should be enabled or disabled by configuration.
+            require_once($CFG->dirroot.'/local/login/lib.php');
+            if (isguestuser() and ! local_login\course_allows_guest_with_password($course->id)) {
+                redirect(get_login_url());
+            }
+
             redirect($CFG->wwwroot .'/enrol/index.php?id='. $course->id);
         }
     }
