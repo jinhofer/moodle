@@ -1378,19 +1378,26 @@ abstract class restore_dbops {
 
             // 2A - If match by username and mnethost and
             //     (email or non-zero firstaccess) => ok, return target user
+
+            // SDLC-84120 20110808 hoang027 >>> if the auth methods are both "Shib" then ignore emails
             if ($rec = $DB->get_record_sql("SELECT *
                                               FROM {user} u
                                              WHERE username = ?
                                                AND mnethostid = ?
                                                AND (
+                                                       auth  = ?
+                                                    OR
                                                        UPPER(email) = UPPER(?)
                                                     OR (
                                                            firstaccess != 0
                                                        AND firstaccess = ?
                                                        )
                                                    )",
-                                           array($user->username, $user->mnethostid, $user->email, $user->firstaccess))) {
+                                           array($user->username, $user->mnethostid,
+                                                 $user->auth == 'shibboleth' ? 'shibboleth' : '__NO_MATCH__',
+                                                 $user->email, $user->firstaccess))) {
                 return $rec; // Matching user found, return it
+                // <<< SDLC-84120
             }
 
             // 2B - Handle users deleted in DB and "alive" in backup file
@@ -1400,6 +1407,8 @@ abstract class restore_dbops {
             //       hence we are looking there for usernames if not empty. See delete_user()
             // 2B1 - If match by mnethost and user is deleted in DB and not empty email = md5(username) and
             //       (by username LIKE 'backup_email.%' or non-zero firstaccess) => ok, return target user
+
+            // SDLC-84120 20110808 hoang027 >>> if the auth methods are both "Shib" then ignore emails
             if ($rec = $DB->get_record_sql("SELECT *
                                               FROM {user} u
                                              WHERE mnethostid = ?
@@ -1407,13 +1416,18 @@ abstract class restore_dbops {
                                                AND ".$DB->sql_isnotempty('user', 'email', false, false)."
                                                AND email = ?
                                                AND (
+                                                       auth  = ?
+                                                    OR
                                                        UPPER(username) LIKE UPPER(?)
                                                     OR (
                                                            firstaccess != 0
                                                        AND firstaccess = ?
                                                        )
                                                    )",
-                                           array($user->mnethostid, md5($user->username), $user->email.'.%', $user->firstaccess))) {
+                                           array($user->mnethostid, md5($user->username),
+                                                 $user->auth == 'shibboleth' ? 'shibboleth' : '__NO_MATCH__',
+                                                 $user->email.'.%', $user->firstaccess))) {
+                // <<< SDLC-84120
                 return $rec; // Matching user found, return it
             }
 
