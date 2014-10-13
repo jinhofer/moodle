@@ -155,7 +155,8 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     // Pending course requests.
     if (!empty($CFG->enablecourserequests)) {
         $ADMIN->add('courses', new admin_externalpage('coursespending', new lang_string('pendingrequests'),
-                $CFG->wwwroot . '/course/pending.php', array('moodle/site:approvecourse')));
+                # 20141013 Colin. Use custom pending.php. Copied from 2.6 codebase.
+                $CFG->wwwroot . '/local/course/pending.php', array('moodle/site:approvecourse')));
     }
 
     // Add a category for backups.

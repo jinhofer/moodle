@@ -1401,12 +1401,15 @@ function print_course_request_buttons($context) {
     }
     if (!has_capability('moodle/course:create', $context) && has_capability('moodle/course:request', $context)) {
     /// Print a button to request a new course
-        echo $OUTPUT->single_button(new moodle_url('/course/request.php'), get_string('requestcourse'), 'get');
+        # 20141013 Colin. Changed path for course request. Copied from 2.6 codebase.
+        echo $OUTPUT->single_button('/local/course/requestgateway.php', get_string('requestcourse'), 'get');
     }
     /// Print a button to manage pending requests
     if ($context->contextlevel == CONTEXT_SYSTEM && has_capability('moodle/site:approvecourse', $context)) {
-        $disabled = !$DB->record_exists('course_request', array());
-        echo $OUTPUT->single_button(new moodle_url('/course/pending.php'), get_string('coursespending'), 'get', array('disabled' => $disabled));
+        # 20141013 Colin. Changed course request table name and added condition.
+        #          also changed path for pending request page. Copied from 2.6 codebase.
+        $disabled = !$DB->record_exists_select('course_request_u', "status < 8");
+        echo $OUTPUT->single_button('/local/course/pending.php', get_string('coursespending'), 'get', array('disabled'=>$disabled));
     }
 }
 

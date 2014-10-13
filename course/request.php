@@ -51,6 +51,9 @@ $context = context_system::instance();
 $PAGE->set_context($context);
 require_capability('moodle/course:request', $context);
 
+// 20141013 Colin.  Redirecting from this page to our custom request pages. Copied from dev26.
+redirect($CFG->wwwroot . '/local/course/requestgateway.php');
+
 // Set up the form.
 $data = course_request::prepare();
 $requestform = new course_request_form($url, compact('editoroptions'));
