@@ -57,16 +57,29 @@ Structure of the user enroller panel
 .user-enroller-panel .uep-search-results .user.enrolled .count {width:40px;color:#eee;}
 .user-enroller-panel .uep-search-results .uep-more-results {background-color:#eee;padding:5px;border-top:1px solid #BBB;}
 
+.user-enroller-panel .uep-search-help {margin:0px;text-align:left;}
 .user-enroller-panel .uep-loading-lightbox {position:absolute;width:100%;height:100%;top:0;left:0;background-color:#FFF;min-width:50px;min-height:50px;}
 .user-enroller-panel .uep-loading-lightbox.hidden {display:none;}
 .user-enroller-panel .uep-loading-lightbox .loading-icon {margin:auto;vertical-align:middle;margin-top:125px;}
 
 .user-enroller-panel .uep-footer {padding:3px;background-color:#ddd;text-align:center;}
-.user-enroller-panel .uep-search {margin:3px;}
+.user-enroller-panel .uep-search {margin:3px 3px 9px 3px;}
 .user-enroller-panel .uep-search label {padding-right:8px;}
-.user-enroller-panel .uep-search input {width:50%;}
-.user-enroller-panel .uep-search input.uep-search-btn {width:20%;}
+.user-enroller-panel .uep-search input {width:59%;}
+.user-enroller-panel .uep-search input.uep-search-btn {width:30%;}
 .user-enroller-panel .uep-searchoptions {margin:3px;cursor:pointer;}
+.user-enroller-panel .uep-searchoptions select {margin-left:1em;}
+
+/** STRY0010016 20130805 kerzn002
+ *  Added the following uep-ldap styles for adding single
+ *  users from the directory.  See enrol/manual/yui/quickenrol/quickenrol.js
+ */
+.user-enroller-panel .uep-ldap {margin:3px 3px 9px 3px;}
+.user-enroller-panel .uep-ldap label {padding-right:8px;}
+.user-enroller-panel .uep-ldap input {width:59%;}
+.user-enroller-panel .uep-ldap input.uep-ldap-btn {width:30%;}
+.user-enroller-panel .uep-ldapoptions {margin:3px;cursor:pointer;}
+
 .user-enroller-panel .uep-searchoptions select {margin-left:1em;}
 .user-enroller-panel .collapsibleheading img {margin-right:8px;}
 .user-enroller-panel .collapsiblearea {border:1px solid #bbb;background-color:#f6f6f6;}

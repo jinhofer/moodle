@@ -63,6 +63,10 @@ abstract class user_selector_base {
     protected $searchanywhere = false;
     /** @var mixed This is used by get selected users */
     protected $validatinguserids = null;
+    /** @var boolean Should we show the directory search box. */
+    // STRY0010016 20130805 kerzn002
+    // By default, do not search the directory
+    protected $directorysearch = false;
 
     /**  @var boolean Used to ensure we only output the search options for one user selector on
      * each page. */
@@ -81,6 +85,13 @@ abstract class user_selector_base {
 
     /** @var int this is used to define maximum number of users visible in list */
     public $maxusersperpage = 100;
+
+    // STRY0010016 20130805 kerzn002
+    // Define a new module for the directory search UI
+    protected static $jsmodule_ldap = array(
+                'name' => 'ldap_searcher',
+                'fullpath' => '/local/user/module_ldap.js',
+                'requires' => array('node', 'event-custom', 'datasource', 'json'));
 
     /**
      * Constructor. Each subclass must have a constructor with this signature.
@@ -115,6 +126,11 @@ abstract class user_selector_base {
         }
         if (isset($options['multiselect'])) {
             $this->multiselect = $options['multiselect'];
+        }
+        if (isset($options['searchdirectory'])) {
+            // STRY0010016 20130805 kerzn002
+            // Pass the appropriate options.
+            $this->directorysearch = $options['searchdirectory'];
         }
 
         // Read the user prefs / optional_params that we use.
@@ -257,6 +273,18 @@ abstract class user_selector_base {
             $PAGE->requires->js_init_call('M.core_user.init_user_selector_options_tracker', array(), false, self::$jsmodule);
             user_selector_base::$searchoptionsoutput = true;
         }
+
+        // STRY0010016 20130805 kerzn002
+        // If this is a screen that wants to show a directory search box and the user is allowed to add users from the directory, add the box.
+        if ($this->directorysearch and has_capability('local/user:createfromdirectory', $PAGE->context->get_course_context())) {
+            $output .= print_collapsible_region_start('', 'directorysearch', get_string('ldapsearch_collapse_caption', 'local_user'), '', false, true);
+            $output .= '<p class="directorysearch_help">' . get_string('ldapsearch_collapse_help', 'local_user') . '</p>';
+            $output .= '<input type="hidden" name="' . $this->name . '_ldapcourseid" id="' . $this->name . '_ldapcourseid" value="' . $PAGE->context->get_course_context()->instanceid . '"/>';
+            $output .= '<input type="text" name="' . $this->name  . '_ldapsearchtext" id="' . $this->name  . '_ldapsearchtext" size="15"/>';
+            $output .= '<input type="button" name="' . $this->name  . '_ldapsearchbutton" id="' . $this->name .'_ldapsearchbutton" value="' . get_string('ldapsearch', 'local_user')  . '"/>';
+            $output .= print_collapsible_region_end(true);
+        }
+
         $output .= "</div>\n</div>\n\n";
 
         // Initialise the ajax functionality.
@@ -655,6 +683,12 @@ abstract class user_selector_base {
             false,
             self::$jsmodule
         );
+
+        if ($this->directorysearch) {
+            // STRY0010016 20130805 kerzn002
+            //only load on pages that explicitly ask for a directory search box
+            $PAGE->requires->js_init_call('M.core_user.init_ldap_search', array($this->name, null, $this->extrafields, $search), false, self::$jsmodule_ldap);
+        }
         return $output;
     }
 }
