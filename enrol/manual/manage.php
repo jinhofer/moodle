@@ -73,7 +73,13 @@ navigation_node::override_active_url(new moodle_url('/enrol/users.php', array('i
 // Create the user selector objects.
 $options = array('enrolid' => $enrolid, 'accesscontext' => $context);
 
-$potentialuserselector = new enrol_manual_potential_participant('addselect', $options);
+// STRY0010016 20130805 kerzn002
+// Because we need the potential user box here to have a directory search box,
+// the options need to be slightly different.
+$potential_options = $options;
+$potential_options['searchdirectory'] = true;
+
+$potentialuserselector = new enrol_manual_potential_participant('addselect', $potential_options);
 $currentuserselector = new enrol_manual_current_participant('removeselect', $options);
 
 // Build the list of options for the enrolment period dropdown.

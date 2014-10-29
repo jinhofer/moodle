@@ -236,6 +236,10 @@ class enrol_manual_plugin extends enrol_plugin {
         $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
         $defaultduration = $instance->enrolperiod > 0 ? $instance->enrolperiod / 86400 : '';
 
+        // STRY0010016 20130805 kerzn002
+        // Make sure that the user is allowed to create users from the directory
+        $addSingleUser = has_capability('local/user:createfromdirectory', $manager->get_context());
+
         $modules = array('moodle-enrol_manual-quickenrolment', 'moodle-enrol_manual-quickenrolment-skin');
         $arguments = array(
             'instances'           => $instances,
@@ -247,6 +251,7 @@ class enrol_manual_plugin extends enrol_plugin {
             'defaultDuration'     => $defaultduration,
             'disableGradeHistory' => $CFG->disablegradehistory,
             'recoverGradesDefault'=> '',
+            'useDirectory'        => $addSingleUser,
             'cohortsAvailable'    => cohort_get_available_cohorts($manager->get_context(), COHORT_COUNT_MEMBERS, 0, 1) ? true : false
         );
 
@@ -274,6 +279,10 @@ class enrol_manual_plugin extends enrol_plugin {
             'finishenrollingusers',
             'recovergrades'), 'enrol');
         $button->strings_for_js(array('browseusers', 'browsecohorts'), 'enrol_manual');
+        // STRY0010016 20130805 kerzn002
+        // These three values are used when adding users from the directory.
+        // They're in local_enrol to avoid modifying core Moodle.
+        $button->strings_for_js(array('ldapsearch', 'usersearch_help', 'usersearch_ldap'), 'local_user');
         $button->strings_for_js('assignroles', 'role');
         $button->strings_for_js('startingfrom', 'moodle');
 
