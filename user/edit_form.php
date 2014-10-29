@@ -84,6 +84,18 @@ class user_edit_form extends moodleform {
         // Next the customisable profile fields.
         profile_definition($mform, $userid);
 
+        // SDLC-84396 20110726 hoang027 >>> require moodle/user:update capability to edit idnumber and timezone
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        if (!has_capability('moodle/user:update', $systemcontext)) {
+            $mform->removeElement('idnumber');  // remove idnumber
+
+            try {
+                $mform->hardFreeze('timezone');  // lock timezone
+            }
+            catch(Exception $e) {}
+         }
+         // <<< SDLC-84396
+
         $this->add_action_buttons(false, get_string('updatemyprofile'));
     }
 

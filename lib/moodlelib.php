@@ -4057,6 +4057,23 @@ function create_user_record($username, $password, $auth = 'manual') {
         }
     }
 
+    // 20111102 hoang027 >>> get custom UMN default values
+    if (file_exists($CFG->dirroot . '/local/user/lib.php')) {
+        include_once($CFG->dirroot . '/local/user/lib.php');
+
+        if (method_exists('local_user_creator', 'get_defaults')) {
+            $defaults = truncate_userinfo(local_user_creator::get_defaults(NULL, array('auth')));
+
+            foreach ($defaults as $key => $value) {
+                if (!isset($newuser->$key) || empty($newuser->$key)) { // honor the auth plugin settings
+                    $newuser->$key = $value;
+                }
+            }
+        }
+    }
+    // <<< 20111102 hoang027
+
+
     if (!empty($newuser->email)) {
         if (email_is_not_allowed($newuser->email)) {
             unset($newuser->email);
