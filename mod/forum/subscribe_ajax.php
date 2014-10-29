@@ -29,6 +29,7 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
 $forumid        = required_param('forumid', PARAM_INT);             // The forum to subscribe or unsubscribe.
 $discussionid   = optional_param('discussionid', null, PARAM_INT);  // The discussionid to subscribe.
 $sesskey        = optional_param('sesskey', null, PARAM_RAW);
+$includetext    = optional_param('includetext', false, PARAM_BOOL);
 
 $forum          = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
 $course         = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
@@ -37,6 +38,7 @@ $cm             = get_coursemodule_from_instance('forum', $forum->id, $course->i
 $context        = context_module::instance($cm->id);
 
 require_login($course, false, $cm);
+require_capability('mod/forum:viewdiscussion', $context);
 
 $return = new stdClass();
 
@@ -55,6 +57,6 @@ if (\mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, 
 }
 
 // Now return the updated subscription icon.
-$return->icon = forum_get_discussion_subscription_icon($forum, $discussion->id);
+$return->icon = forum_get_discussion_subscription_icon($forum, $discussion->id, null, $includetext);
 echo json_encode($return);
 die;

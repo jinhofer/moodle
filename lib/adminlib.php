@@ -202,6 +202,13 @@ function uninstall_plugin($type, $name) {
     // Delete scheduled tasks.
     $DB->delete_records('task_scheduled', array('component' => $pluginname));
 
+    // Delete Inbound Message datakeys.
+    $DB->delete_records_select('messageinbound_datakeys',
+            'handler IN (SELECT id FROM {messageinbound_handlers} WHERE component = ?)', array($pluginname));
+
+    // Delete Inbound Message handlers.
+    $DB->delete_records('messageinbound_handlers', array('component' => $pluginname));
+
     // delete all the logs
     $DB->delete_records('log', array('module' => $pluginname));
 
@@ -2434,13 +2441,22 @@ class admin_setting_configfile extends admin_setting_configtext {
         '<div class="form-file defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
         $this->description, true, '', $default, $query);
     }
+
     /**
-     * checks if execpatch has been disabled in config.php
+     * Checks if execpatch has been disabled in config.php
      */
     public function write_setting($data) {
         global $CFG;
         if (!empty($CFG->preventexecpath)) {
-            return '';
+            if ($this->get_setting() === null) {
+                // Use default during installation.
+                $data = $this->get_defaultsetting();
+                if ($data === null) {
+                    $data = '';
+                }
+            } else {
+                return '';
+            }
         }
         return parent::write_setting($data);
     }

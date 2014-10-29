@@ -507,7 +507,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         // Create an assignment with a description that should be hidden.
         $assign = $this->create_instance(array('duedate'=>$now + 160,
                                                'alwaysshowdescription'=>false,
-                                               'allowsubmissionsfromdate'=>$now+3,
+                                               'allowsubmissionsfromdate'=>$now + 60,
                                                'intro'=>'Some text'));
 
         // Get the event from the calendar.
@@ -515,7 +515,11 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $event = $DB->get_record('event', $params);
 
         $this->assertEmpty($event->description);
-        sleep(6);
+
+        // Change the allowsubmissionfromdate to the past - do this directly in the DB
+        // because if we call the assignment update method - it will update the calendar
+        // and we want to test that this works from cron.
+        $DB->set_field('assign', 'allowsubmissionsfromdate', $now - 60, array('id'=>$assign->get_instance()->id));
         // Run cron to update the event in the calendar.
         assign::cron();
         $event = $DB->get_record('event', $params);
@@ -661,6 +665,8 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         // Simulate a submission.
         $this->setUser($this->extrastudents[0]);
         $submission = $assign->get_user_submission($this->extrastudents[0]->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $assign->testable_update_submission($submission, $this->extrastudents[0]->id, true, false);
         // Leave this one as DRAFT.
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
@@ -1373,12 +1379,22 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $formdata->instance = $formdata->id;
         $assign->update_instance($formdata);
 
-        // Check we can repopen still.
+        // Mark the submission again.
+        $data = new stdClass();
+        $data->grade = '60.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 1);
+
+        // Check the grade exists.
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEquals(60, (int)$grades[$this->students[0]->id]->rawgrade);
+
+        // Check we can reopen still.
         $result = $assign->testable_process_add_attempt($this->students[0]->id);
         $this->assertEquals(true, $result);
 
+        // Should no longer have a grade because there is no grade for the latest attempt.
         $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
-        $this->assertEquals(50, (int)$grades[$this->students[0]->id]->rawgrade);
+        $this->assertEmpty($grades);
 
     }
 

@@ -64,6 +64,12 @@ class tablelog extends \table_sql implements \renderable {
     protected $cms;
 
     /**
+     * @var int The default number of decimal points to use in this course
+     * when a grade item does not itself define the number of decimal points.
+     */
+    protected $defaultdecimalpoints;
+
+    /**
      * Sets up the table_log parameters.
      *
      * @param string $uniqueid unique id of table.
@@ -83,6 +89,7 @@ class tablelog extends \table_sql implements \renderable {
      */
     public function __construct($uniqueid, \context_course $context, $url, $filters = array(), $download = '', $page = 0,
                                 $perpage = 100) {
+        global $CFG;
         parent::__construct($uniqueid);
 
         $this->set_attribute('class', 'gradereport_history generaltable generalbox');
@@ -96,6 +103,7 @@ class tablelog extends \table_sql implements \renderable {
         $this->gradeitems = \grade_item::fetch_all(array('courseid' => $this->courseid));
         $this->cms = get_fast_modinfo($this->courseid);
         $this->useridfield = 'userid';
+        $this->defaultdecimalpoints = grade_get_setting($this->courseid, 'decimalpoints', $CFG->grade_decimalpoints);
 
         // Define columns in the table.
         $this->define_table_columns();
@@ -168,6 +176,40 @@ class tablelog extends \table_sql implements \renderable {
     }
 
     /**
+     * Method to display the final grade.
+     *
+     * @param \stdClass $history an entry of history record.
+     *
+     * @return string HTML to display
+     */
+    public function col_finalgrade(\stdClass $history) {
+        if (!empty($this->gradeitems[$history->itemid])) {
+            $decimalpoints = $this->gradeitems[$history->itemid]->get_decimals();
+        } else {
+            $decimalpoints = $this->defaultdecimalpoints;
+        }
+
+        return format_float($history->finalgrade, $decimalpoints);
+    }
+
+    /**
+     * Method to display the previous grade.
+     *
+     * @param \stdClass $history an entry of history record.
+     *
+     * @return string HTML to display
+     */
+    public function col_prevgrade(\stdClass $history) {
+        if (!empty($this->gradeitems[$history->itemid])) {
+            $decimalpoints = $this->gradeitems[$history->itemid]->get_decimals();
+        } else {
+            $decimalpoints = $this->defaultdecimalpoints;
+        }
+
+        return format_float($history->prevgrade, $decimalpoints);
+    }
+
+    /**
      * Method to display column timemodifed.
      *
      * @param \stdClass $history an entry of history record.
@@ -209,6 +251,11 @@ class tablelog extends \table_sql implements \renderable {
      * @return string HTML to display
      */
     public function col_grader(\stdClass $history) {
+        if (empty($history->usermodified)) {
+            // Not every row has a valid usermodified.
+            return '';
+        }
+
         $grader = new \stdClass();
         $grader = username_load_fields_from_object($grader, $history, 'grader');
         $name = fullname($grader);
@@ -368,7 +415,7 @@ class tablelog extends \table_sql implements \renderable {
                    FROM {grade_grades_history} ggh
               LEFT JOIN {grade_items} gi ON gi.id = ggh.itemid
                    JOIN {user} u ON u.id = ggh.userid
-                   JOIN {user} ug ON ug.id = ggh.usermodified
+              LEFT JOIN {user} ug ON ug.id = ggh.usermodified
                   WHERE $where";
 
         // As prevgrade is a dynamic field, we need to wrap the query. This is the only filtering
@@ -382,11 +429,29 @@ class tablelog extends \table_sql implements \renderable {
         }
 
         // Add order by if needed.
-        if (!$count && $this->get_sql_sort()) {
-            $sql .= " ORDER BY " . $this->get_sql_sort();
+        if (!$count && $sqlsort = $this->get_sql_sort()) {
+            $sql .= " ORDER BY " . $sqlsort;
         }
 
         return array($sql, $params);
+    }
+
+    /**
+     * Get the SQL fragment to sort by.
+     *
+     * This is overridden to sort by timemodified and ID by default. Many items happen at the same time
+     * and a second sorting by ID is valuable to distinguish the order in which the history happened.
+     *
+     * @return string SQL fragment.
+     */
+    public function get_sql_sort() {
+        $columns = $this->get_sort_columns();
+        if (count($columns) == 1 && isset($columns['timemodified']) && $columns['timemodified'] == SORT_DESC) {
+            // Add the 'id' column when we are using the default sorting.
+            $columns['id'] = SORT_DESC;
+            return self::construct_order_by($columns);
+        }
+        return parent::get_sql_sort();
     }
 
     /**

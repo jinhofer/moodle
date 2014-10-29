@@ -1953,6 +1953,13 @@ function file_mimetype_in_typegroup($mimetype, $groups) {
  */
 function send_file_not_found() {
     global $CFG, $COURSE;
+
+    // Allow cross-origin requests only for Web Services.
+    // This allow to receive requests done by Web Workers or webapps in different domains.
+    if (WS_SERVER) {
+        header('Access-Control-Allow-Origin: *');
+    }
+
     send_header_404();
     print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); //this is not displayed on IIS??
 }
@@ -2196,7 +2203,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
     }
 
     header('Content-Disposition: attachment; filename="'.$filename.'"');
-    if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+    if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
         header('Cache-Control: private, max-age=10, no-transform');
         header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
         header('Pragma: ');
@@ -2273,7 +2280,10 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 
     if ($forcedownload) {
         header('Content-Disposition: attachment; filename="'.$filename.'"');
-    } else {
+    } else if ($mimetype !== 'application/x-shockwave-flash') {
+        // If this is an swf don't pass content-disposition with filename as this makes the flash player treat the file
+        // as an upload and enforces security that may prevent the file from being loaded.
+
         header('Content-Disposition: inline; filename="'.$filename.'"');
     }
 
@@ -2289,7 +2299,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 
     } else { // Do not cache files in proxies and browsers
         $nobyteserving = true;
-        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+        if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
             header('Cache-Control: private, max-age=10, no-transform');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: ');
@@ -2445,7 +2455,10 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
 
     if ($forcedownload) {
         header('Content-Disposition: attachment; filename="'.$filename.'"');
-    } else {
+    } else if ($mimetype !== 'application/x-shockwave-flash') {
+        // If this is an swf don't pass content-disposition with filename as this makes the flash player treat the file
+        // as an upload and enforces security that may prevent the file from being loaded.
+
         header('Content-Disposition: inline; filename="'.$filename.'"');
     }
 
@@ -2459,7 +2472,7 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
         header('Pragma: ');
 
     } else { // Do not cache files in proxies and browsers
-        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+        if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
             header('Cache-Control: private, max-age=10, no-transform');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: ');
@@ -2468,6 +2481,12 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: no-cache');
         }
+    }
+
+    // Allow cross-origin requests only for Web Services.
+    // This allow to receive requests done by Web Workers or webapps in different domains.
+    if (WS_SERVER) {
+        header('Access-Control-Allow-Origin: *');
     }
 
     if (empty($filter)) {
@@ -2758,21 +2777,17 @@ function file_modify_html_header($text) {
     global $CFG;
 
     $stylesheetshtml = '';
-/*    foreach ($CFG->stylesheets as $stylesheet) {
+/*
+    foreach ($CFG->stylesheets as $stylesheet) {
         //TODO: MDL-21120
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-    }*/
-
-    $ufo = '';
-    if (filter_is_enabled('mediaplugin')) {
-        // this script is needed by most media filter plugins.
-        $attributes = array('type'=>'text/javascript', 'src'=>$CFG->httpswwwroot . '/lib/ufo.js');
-        $ufo = html_writer::tag('script', '', $attributes) . "\n";
     }
+*/
+    // TODO The code below is actually a waste of CPU. When MDL-29738 will be implemented it should be re-evaluated too.
 
     preg_match('/\<head\>|\<HEAD\>/', $text, $matches);
     if ($matches) {
-        $replacement = '<head>'.$ufo.$stylesheetshtml;
+        $replacement = '<head>'.$stylesheetshtml;
         $text = preg_replace('/\<head\>|\<HEAD\>/', $replacement, $text, 1);
         return $text;
     }
@@ -2781,7 +2796,7 @@ function file_modify_html_header($text) {
     preg_match('/\<html\>|\<HTML\>/', $text, $matches);
     if ($matches) {
         // replace <html> tag with <html><head>includes</head>
-        $replacement = '<html>'."\n".'<head>'.$ufo.$stylesheetshtml.'</head>';
+        $replacement = '<html>'."\n".'<head>'.$stylesheetshtml.'</head>';
         $text = preg_replace('/\<html\>|\<HTML\>/', $replacement, $text, 1);
         return $text;
     }
@@ -2789,13 +2804,13 @@ function file_modify_html_header($text) {
     // if not, look for <body> tag, and stick <head> before body
     preg_match('/\<body\>|\<BODY\>/', $text, $matches);
     if ($matches) {
-        $replacement = '<head>'.$ufo.$stylesheetshtml.'</head>'."\n".'<body>';
+        $replacement = '<head>'.$stylesheetshtml.'</head>'."\n".'<body>';
         $text = preg_replace('/\<body\>|\<BODY\>/', $replacement, $text, 1);
         return $text;
     }
 
     // if not, just stick a <head> tag at the beginning
-    $text = '<head>'.$ufo.$stylesheetshtml.'</head>'."\n".$text;
+    $text = '<head>'.$stylesheetshtml.'</head>'."\n".$text;
     return $text;
 }
 
