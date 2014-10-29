@@ -6,8 +6,6 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
         BASE : 'base',
         SEARCH : 'search',
         SEARCHBTN : 'searchbtn',
-        LDAP : 'ldap',
-        LDAPBTN : 'ldapbtn',
         PARAMS : 'params',
         URL : 'url',
         AJAXURL : 'ajaxurl',
@@ -26,7 +24,6 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
         ASSIGNABLEROLES : 'assignableRoles',
         DISABLEGRADEHISTORY : 'disableGradeHistory',
         RECOVERGRADESDEFAULT : 'recoverGradesDefault',
-        USEDIRECTORY : 'useDirectory',
         ENROLCOUNT : 'enrolCount',
         PERPAGE : 'perPage'
     };
@@ -69,9 +66,6 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
         ACTIVE : 'active',
         SEARCH : 'uep-search',
         SEARCHBTN : 'uep-search-btn',
-        SEARCHHELP : 'uep-search-help',
-        LDAP : 'uep-ldap',
-        LDAPBTN : 'uep-ldap-btn',
         CLOSE : 'close',
         CLOSEBTN : 'close-button'
     };
@@ -92,9 +86,6 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                     .append(create('<input type="checkbox" id="'+CSS.RECOVERGRADES+'" name="'+CSS.RECOVERGRADES+'"'+ this.get(UEP.RECOVERGRADESDEFAULT) +' />'))
             }
 
-            // STRY0010016 20130805 kerzn002
-            // This entire section was refactored to include a directory search field and button as well as
-            // help text for each box.  At the very least, we'll need a listbox of users and a footer.
             this.set(UEP.BASE, create('<div class="'+CSS.PANEL+' '+CSS.HIDDEN+'"></div>')
                 .append(create('<div class="'+CSS.WRAP+'"></div>')
                     .append(create('<div class="'+CSS.HEADER+' header"></div>')
@@ -120,36 +111,18 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                         .append(create('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>')
                             .append(create('<img alt="loading" class="'+CSS.LOADINGICON+'" />')
                                 .setAttribute('src', M.util.image_url('i/loading', 'moodle')))
-                            .setStyle('opacity', 0.5)))));
-
-            // We'll always need a footer, too
-            this.get(UEP.BASE).one('.'+CSS.WRAP)
-                .append(create('<div class="'+CSS.FOOTER+'"></div>')
-                    .append(create('<div class="'+CSS.SEARCH+'"><label for="enrolusersearch" class="accesshide">'+M.str.enrol.usersearch+'</label></div>')));
-
-            // STRY0010016 20130805 kerzn002
-            // Here's where we actually build the directory search block.  Make both a regular search box and a directory box.
-            if (this.get(UEP.USEDIRECTORY) == true) {
-                this.get(UEP.BASE).one('.' + CSS.SEARCH)
-                        .append(create('<p class="'+CSS.SEARCHHELP+'">'+M.str.local_user.usersearch_help+'</p>'))
+                            .setStyle('opacity', 0.5)))
+                    .append(create('<div class="'+CSS.FOOTER+'"></div>')
+                        .append(create('<div class="'+CSS.SEARCH+'"><label for="enrolusersearch" class="accesshide">'+M.str.enrol.usersearch+'</label></div>')
                             .append(create('<input type="text" id="enrolusersearch" value="" />'))
                                 .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+'" value="'+M.str.enrol.usersearch+'" />'))
-                                    .append(create('<div class="'+CSS.LDAP+'"><label for="ldapsearch" class="accesshide">'+M.str.local_user.ldapsearch+'</label></div>')
-                                        .append(create('<p class="'+CSS.SEARCHHELP+'">'+M.str.local_user.usersearch_ldap+'</p>'))
-                                        .append(create('<input type="text" id="enroluserldap" value="" />'))
-                                        .append(create('<input type="button" id="ldapbtn" class="'+CSS.LDAPBTN+'" value="'+M.str.local_user.ldapsearch+'" />')));
-            }
-            else {
-                // With no directory search, just setup the searchbox as usual
-                this.get(UEP.BASE).one('.' + CSS.SEARCH)
-                    .append(create('<input type="text" id="enrolusersearch" value="" />'))
-                        .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+'" value="'+M.str.enrol.usersearch+'" />'));
-            }
-
-            // Always create a close button too
-            this.get(UEP.BASE).one('.' + CSS.FOOTER)
-                .append(create('<div class="'+CSS.CLOSEBTN+'"></div>')
-                    .append(create('<input type="button" value="'+M.str.enrol.finishenrollingusers+'" />')));
+                        )
+                        .append(create('<div class="'+CSS.CLOSEBTN+'"></div>')
+                            .append(create('<input type="button" value="'+M.str.enrol.finishenrollingusers+'" />'))
+                        )
+                    )
+                )
+            );
 
             this.set(UEP.SEARCH, this.get(UEP.BASE).one('#enrolusersearch'));
             this.set(UEP.SEARCHBTN, this.get(UEP.BASE).one('#searchbtn'));
@@ -158,14 +131,6 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                     node.on('click', this.show, this);
                 }
             }, this);
-
-            // STRY0010016 20130805 kerzn002
-            // Only load up directory nodes if we've made them.
-            if (this.get(UEP.USEDIRECTORY) == true) {
-                this.set(UEP.LDAP, this.get(UEP.BASE).one('#enroluserldap'));
-                this.set(UEP.LDAPBTN, this.get(UEP.BASE).one('#ldapbtn'));
-            }
-
             this.get(UEP.BASE).one('.'+CSS.HEADER+' .'+CSS.CLOSE).on('click', this.hide, this);
             this.get(UEP.BASE).one('.'+CSS.FOOTER+' .'+CSS.CLOSEBTN+' input').on('click', this.hide, this);
             this._loadingNode = this.get(UEP.BASE).one('.'+CSS.CONTENT+' .'+CSS.LIGHTBOX);
@@ -175,13 +140,6 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
 
             Y.on('key', this.preSearch, this.get(UEP.SEARCH), 'down:13', this);
             this.get(UEP.SEARCHBTN).on('click', this.preSearch, this);
-
-            // STRY0010016 20130805 kerzn002
-            // Only register events if we've made a button.
-            if (this.get(UEP.USEDIRECTORY) == true) {
-                Y.on('key', this.ldap, this.get(UEP.LDAP), 'down:13', this);
-                this.get(UEP.LDAPBTN).on('click', this.ldap, this);
-            }
 
             Y.one(document.body).append(this.get(UEP.BASE));
 
@@ -370,56 +328,6 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 context:this,
                 arguments:{
                     append:append,
-                    enrolid:params['enrolid']
-                }
-            });
-        },
-        ldap : function(e, append) {
-            // STRY0010016 20130805 kerzn002
-            // Reset the number of users in the list box to zero,
-            // query the directory, create the user, and then
-            // search for the newly created user so that it's the only
-            // one displayed in the list box.
-            append = false
-            if (e) {
-                e.halt();
-                e.preventDefault();
-            }
-            var on, params;
-            if (append) {
-                this.set(UEP.PAGE, this.get(UEP.PAGE)+1);
-            } else {
-                this.set(UEP.USERCOUNT, 0);
-                this.set(UEP.PAGE, 0);
-            }
-            params = this.get(UEP.PARAMS);
-            params['sesskey'] = M.cfg.sesskey;
-            params['action'] = 'searchldap';
-            params['ldap'] = this.get(UEP.LDAP).get('value').toLowerCase();   // Replaces "search" param.
-            params['page'] = this.get(UEP.PAGE);
-            params['enrolcount'] = this.get(UEP.ENROLCOUNT);
-            params['perpage'] = this.get(UEP.PERPAGE);
-
-            // Set the form to have the lowercase InternetID
-            this.get(UEP.LDAP).set('value', params['ldap']);
-
-            if (this.get(UEP.MULTIPLE)) {
-                alert('oh no there are multiple');
-            } else {
-                var instance = this.get(UEP.INSTANCES)[0];
-                params['enrolid'] = instance.id;
-            }
-            Y.io(M.cfg.wwwroot+this.get(UEP.AJAXURL), {
-                method:'POST',
-                data:build_querystring(params),
-                on : {
-                    start : this.displayLoading,
-                    complete : this.processSearchResults,
-                    end : this.removeLoading
-                },
-                context : this,
-                arguments : {
-                    append : append,
                     enrolid:params['enrolid']
                 }
             });
@@ -628,11 +536,6 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             },
             recoverGradesDefault : {
                 value : ''
-            },
-            useDirectory : {
-                // STRY0010016 20130805 kerzn002
-                // Whether or not the ldap search interface should be rendered.
-                validator : Y.Lang.isBool
             },
             enrolCount : {
                 value : 0,
