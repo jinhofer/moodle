@@ -224,5 +224,14 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         }
     }
 
+    //20140206 mart0969 - Add new category and pages for managing navigation
+    // Navigation
+    $ADMIN->add('grades', new admin_category('gradenavigation', new lang_string('navigationsettings', 'grades')));
+    $reportadmin = new admin_externalpage('managegradereport', new lang_string('managegradereport','grades'), $CFG->wwwroot.'/grade/edit/plugins/index.php?type=gradereport', 'moodle/grade:manage');
+    $ADMIN->add('gradenavigation',$reportadmin);
+    $importadmin = new admin_externalpage('managegradeimport', new lang_string('managegradeimport','grades'), $CFG->wwwroot.'/grade/edit/plugins/index.php?type=gradeimport', 'moodle/grade:manage');
+    $ADMIN->add('gradenavigation',$importadmin);
+    $exportadmin = new admin_externalpage('managegradeexport', new lang_string('managegradeexport','grades'), $CFG->wwwroot.'/grade/edit/plugins/index.php?type=gradeexport', 'moodle/grade:manage');
+    $ADMIN->add('gradenavigation',$exportadmin);
 } // end of speedup
 

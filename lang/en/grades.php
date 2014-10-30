@@ -346,6 +346,8 @@ $string['hidelocks'] = 'Hide locks';
 $string['hidenooutcomes'] = 'Show outcomes';
 $string['hidequickfeedback'] = 'Hide quick feedback';
 $string['hideranges'] = 'Hide ranges';
+//20140206 mart0969 - Add string for hide/show
+$string['hideshow'] = 'Hide/Show';
 $string['hidetotalifhiddenitems'] = 'Hide totals if they contain hidden items';
 $string['hidetotalifhiddenitems_help'] = 'This setting specifies whether totals which contain hidden grade items are shown to students or replaced with a hyphen (-). If shown, the total may be calculated either excluding or including hidden items.
 
@@ -422,6 +424,11 @@ $string['locktimedate'] = 'Locked after: {$a}';
 $string['lockverbose'] = 'Lock {$a->category} {$a->itemmodule} {$a->itemname}';
 $string['lowest'] = 'Lowest';
 $string['lowgradeletter'] = 'Low';
+//20140206 mart0969 - Add strings for managing grade plugins
+$string['managegradeexport'] = 'Export item order';
+$string['managegradeimport'] = 'Import item order';
+$string['managegradereport'] = 'Report item order';
+//End 20140206
 $string['manualitem'] = 'Manual item';
 $string['mapfrom'] = 'Map from';
 $string['mappings'] = 'Grade item mappings';
@@ -455,6 +462,8 @@ $string['multfactorvalue'] = 'Multiplicator value for {$a}';
 $string['multfactor_help'] = 'The multiplicator is the factor by which all grades for this grade item will be multiplied, with a maximum value of the maximum grade. For example, if the multiplicator is 2 and the maximum grade is 100, then all grades less than 50 are multiplied by 2, and all grades 50 and above are changed to 100.';
 $string['mypreferences'] = 'My preferences';
 $string['myreportpreferences'] = 'My report preferences';
+//20140206 mart0969 - Add string for navigation settings category
+$string['navigationsettings'] = 'Navigation';
 $string['navmethod'] = 'Navigation method';
 $string['neverdeletehistory'] = 'Never delete history';
 $string['newcategory'] = 'New category';

@@ -2720,8 +2720,12 @@ abstract class grade_helper {
         } else if (count($gradepreferences) == 0) {
             $gradepreferences = false;
             asort($gradereports);
+            //20140206 mart0969 - Sort plugins based on config in database
+            $gradereports = self::get_sorted_plugins($gradereports,'gradereport');
         } else {
             asort($gradereports);
+            //20140206 mart0969 - Sort plugins based on config in database
+            $gradereports = self::get_sorted_plugins($gradereports,'gradereport');
             asort($gradepreferences);
         }
         self::$gradereports = $gradereports;
@@ -2845,6 +2849,8 @@ abstract class grade_helper {
 
         if (count($importplugins) > 0) {
             asort($importplugins);
+            //20140206 mart0969 - Sort plugins based on config in database
+            $importplugins = self::get_sorted_plugins($importplugins,'gradeimport');
             self::$importplugins = $importplugins;
         } else {
             self::$importplugins = false;
@@ -2881,12 +2887,47 @@ abstract class grade_helper {
         }
         if (count($exportplugins) > 0) {
             asort($exportplugins);
+            //20140206 Sort plugins based on config in database
+            $exportplugins = self::get_sorted_plugins($exportplugins,'gradeexport');
             self::$exportplugins = $exportplugins;
         } else {
             self::$exportplugins = false;
         }
         return self::$exportplugins;
     }
+
+    //20140206 mart0969 - Add function to sort plugins based on config in database
+    /**
+     * Sort list of plugins based on configuration in database
+     * @param array $plugins
+     * @param string $type
+     * @return array
+     */
+     public static function get_sorted_plugins($plugins, $type) {
+        $new = array();
+        $sorted = array();
+        //Check configuration in database
+        foreach ($plugins as $name => $data) {
+            //Check if plugin is hidden
+            $hidden = get_config($type . '_' . $name, 'disabled');
+            if ($hidden == 1) {
+                continue;
+            }
+            $idx = get_config($type . '_' . $name, 'sortorder');
+            if (!$idx) {
+                $idx = 0;
+            }
+            while (array_key_exists($idx, $sorted)) $idx +=1;
+            $sorted[$idx] = $name;
+        }
+        ksort($sorted);
+        //Now take the sorted list and get the data from the original list passed in
+        foreach ($sorted as $pluginname) {
+            $new[$pluginname] = $plugins[$pluginname];
+        }
+
+        return $new;
+     }
 
     /**
      * Returns the value of a field from a user record
