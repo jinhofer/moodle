@@ -51,6 +51,9 @@ abstract class grade_export {
     public $onlyactive; // only include users with an active enrolment
     public $usercustomfields; // include users custom fields
 
+    //STRY0010310 mart0969 20140424 - Add property for extra fields for export
+    public $extrafields; // array of extra user fields to be added to the export
+
     /**
      * @deprecated since Moodle 2.8
      * @var $previewrows Number of rows in preview.
@@ -99,7 +102,8 @@ abstract class grade_export {
                                               $displaytype = GRADE_DISPLAY_TYPE_REAL,
                                               $decimalpoints = 2,
                                               $onlyactive = false,
-                                              $usercustomfields = false) {
+                                              $usercustomfields = false,
+                                              $extrafields = '') {
 
         debugging('Many argument constructor for class "grade_export" is deprecated. Call the 3 argument version instead.', DEBUG_DEVELOPER);
 
@@ -138,6 +142,13 @@ abstract class grade_export {
         $this->decimalpoints = $decimalpoints;
         $this->onlyactive = $onlyactive;
         $this->usercustomfields = $usercustomfields;
+
+        //STRY0010310 mart0969 20140424 - Add property for extra fields for export
+        $this->extrafields = array();
+        if ($extrafields != '') {
+            $this->extrafields = explode(',',$extrafields);
+        }
+
     }
 
     /**
@@ -190,6 +201,13 @@ abstract class grade_export {
 
         if (isset($formdata->previewrows)) {
             $this->previewrows = $formdata->previewrows;
+        }
+
+        //STRY0010310 mart0969 20140424 - Process extra fields for export from form data
+        if (!empty($formdata->extrafields)) {
+            foreach ($formdata->extrafields as $field => $on) {
+                $this->extrafields[] = $field;
+            }
         }
 
         if (isset($formdata->display)) {
@@ -277,6 +295,43 @@ abstract class grade_export {
     public abstract function print_grades();
 
     /**
+     * STRY0010310 - mart0969 20140424
+     * Edited changes from STRY0010204 - mart0969 20140307
+     * Checks settings to see whether PPSFT, email, and/or groups should be shown
+     * in grade export
+     * Refactoring changes from SDLC-84396: 20120220 hoang027 >>>
+     * determine output settings for username, idnumber, and peoplesoft section
+     * @return array
+     */
+    public function get_extra_fields() {
+        $fieldobj = array();
+        //STRY0010310 mart0969 20140424 - Refactor changes from STRY0010220 to include fields from form data
+        //Create objects from each field
+
+        $stringmanager = get_string_manager();
+        if (!empty($this->extrafields)) {
+            foreach ($this->extrafields as $field) {
+                $obj = new stdClass();
+                $obj->customid  = 0;
+                $obj->shortname = $field;
+
+                // For extrafields, look for fullname string first in grades, then moodle.
+                if ($stringmanager->string_exists($field, 'grades')) {
+                    $obj->fullname  = get_string($field, 'grades');
+                } else if ($stringmanager->string_exists($field, '')) {
+                    $obj->fullname  = get_string($field);
+                } else {
+                    $obj->fullname  = $field;
+                    debugging("String not found in either moodle or grades: $field", DEBUG_DEVELOPER);
+                }
+
+                $fieldobj[] = $obj;
+            }
+        }
+        return $fieldobj;
+    }
+
+    /**
      * Prints preview of exported grades on screen as a feedback mechanism
      * @param bool $require_user_idnumber true means skip users without idnumber
      * @deprecated since 2.8 MDL-46548. Previews are not useful on export.
@@ -287,6 +342,10 @@ abstract class grade_export {
         debugging('function grade_export::display_preview is deprecated.', DEBUG_DEVELOPER);
 
         $userprofilefields = grade_helper::get_user_profile_fields($this->course->id, $this->usercustomfields);
+        //STRY0010204 - mart0969 20140307 - Use new function to get extra fields
+        $extrafields = $this->get_extra_fields();
+        $userprofilefields = array_merge($userprofilefields,$extrafields);
+
         $formatoptions = new stdClass();
         $formatoptions->para = false;
 
@@ -383,6 +442,9 @@ abstract class grade_export {
             $itemidsparam = '-1';
         }
 
+        //STRY0010310 mart0969 20140509 - Add extra fields to export params
+        $extrafields = implode(',', $this->extrafields);
+
         $params = array('id'                =>$this->course->id,
                         'groupid'           =>$this->groupid,
                         'itemids'           =>$itemidsparam,
@@ -392,7 +454,8 @@ abstract class grade_export {
                         'displaytype'       =>$this->displaytype,
                         'decimalpoints'     =>$this->decimalpoints,
                         'export_onlyactive' =>$this->onlyactive,
-                        'usercustomfields'  =>$this->usercustomfields);
+                        'usercustomfields'  =>$this->usercustomfields,
+                        'extrafields'       =>$extrafields);
 
         return $params;
     }

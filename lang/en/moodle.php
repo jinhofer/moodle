@@ -2022,3 +2022,10 @@ $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your {$a}';
 $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
+
+// SDLC-84396 20120220 hoang027 >>> add language string for PeopleSoft section
+// 20141103 Colin. Needed, at least, by get_user_field_name as called from grade/report/grader/lib.php.
+//                 TODO: Consider way to eliminate since not a user-level attribute anyway.
+$string['ppsftsection'] = 'PeopleSoft';
+// <<< SDLC-84396
+

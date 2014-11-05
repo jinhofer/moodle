@@ -197,8 +197,11 @@ class graded_users_iterator {
                 }
             }
         }
-
-        $users_sql = "SELECT $userfields $ofields
+        //STRY0010310 mart0969 20140424 - Get PPSFT grade basis and course last access as well
+        $users_sql = "SELECT $userfields $ofields,
+                             ppsft_enrol.section AS ppsft_section, ppsft_enrol.section AS ppsftsection,
+                             grp.grouptext AS groups, ppsft_enrol.gradingbasis,
+                             FROM_UNIXTIME(la.timeaccess, '%m/%d/%Y') AS courselastaccess
                         FROM {user} u
                         JOIN ($enrolledsql) je ON je.id = u.id
                              $groupsql $customfieldssql
@@ -207,10 +210,44 @@ class graded_users_iterator {
                                     FROM {role_assignments} ra
                                    WHERE ra.roleid $gradebookroles_sql
                                      AND ra.contextid $relatedctxsql
-                             ) rainner ON rainner.userid = u.id
-                         WHERE u.deleted = 0
-                             $groupwheresql
-                    ORDER BY $order";
+                             ) rainner ON rainner.userid = u.id " .
+
+                       // SDLC-84396 20120220 hoang027 >>> retrieve related PeopleSoft sections too
+                       "LEFT JOIN (
+                           SELECT ppsft_class_enrol.userid AS userid,
+                                CONCAT(ppsft_classes.subject,
+                                       ppsft_classes.catalog_nbr, '_',
+                                       ppsft_classes.section) AS section,
+                                       ppsft_class_enrol.grading_basis AS gradingbasis
+                           FROM {ppsft_class_enrol} ppsft_class_enrol
+                                INNER JOIN {ppsft_classes} ppsft_classes
+                                    ON ppsft_classes.id = ppsft_class_enrol.ppsftclassid
+                                INNER JOIN {enrol_umnauto_classes} enrol_umnauto_classes
+                                    ON ppsft_classes.id = enrol_umnauto_classes.ppsftclassid
+                                INNER JOIN {enrol} enrol
+                                    ON enrol_umnauto_classes.enrolid = enrol.id
+                           WHERE  enrol.courseid = :ppsft_course_id AND
+                                  ppsft_class_enrol.status = 'E'
+                           GROUP BY userid
+                       ) ppsft_enrol ON u.id = ppsft_enrol.userid " .
+                       // STRY0010204 20140307 mart0969 >>> Get group memberships too
+                       "LEFT JOIN (
+                            SELECT grm.userid,
+                            GROUP_CONCAT(grps.name ORDER BY grps.name SEPARATOR ' | ') AS grouptext FROM
+                             {groups_members} AS grm JOIN {groups} AS grps ON grm.groupid = grps.id
+                             WHERE grps.courseid = :courseid
+                             GROUP BY grm.userid
+                        ) AS grp ON u.id = grp.userid ".
+                       // STRY0010310 mart0969 20140424 - Get course last access
+                       "LEFT JOIN {user_lastaccess} la ON la.userid = u.id AND la.courseid = :la_course_id
+                       WHERE u.deleted = 0
+                       {$groupwheresql}
+                       ORDER BY {$order}";
+        $params['courseid'] = $this->course->id;
+        $params['ppsft_course_id'] = $this->course->id;
+        $params['la_course_id'] = $this->course->id;
+        // <<< SDLC-84396
+
         $this->users_rs = $DB->get_recordset_sql($users_sql, $params);
 
         if (!$this->onlyactive) {

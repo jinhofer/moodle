@@ -25,6 +25,9 @@
 require_once($CFG->dirroot . '/grade/report/lib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
+# 20141103 Colin. Need this to determine if ppsft classes associated.
+require_once($CFG->dirroot . '/enrol/umnauto/lib.php');
+
 /**
  * Class providing an API for the grader report building and displaying.
  * @uses grade_report
@@ -398,6 +401,39 @@ class grade_report_grader extends grade_report {
         }
     }
 
+    // 20131107 Colin. Custom get_extra_user_fields to handle additional
+    // report options.
+    protected function get_extra_user_fields($consider_global_setting=true) {
+        if ($consider_global_setting) {
+            $fields = get_extra_user_fields($this->context);
+            $fields = array_diff($fields, array('idnumber', 'username', 'email'));
+        } else {
+            $fields = array();
+        }
+
+        $has_ppsft_class  = count(enrol_umnauto_get_course_ppsft_classes($this->courseid)) > 0;
+
+        // This order determines column display order.
+        // Add groups as part of STRY0010038 - 20131209 mart0969
+        if ($this->get_pref('showgroups')) {
+            array_unshift($fields, 'groups');
+        }
+        if ($this->get_pref('showemail')) {
+            array_unshift($fields, 'email');
+        }
+        if ($has_ppsft_class and $this->get_pref('showppsftsection')) {
+            array_unshift($fields, 'ppsftsection');
+        }
+        if ($this->get_pref('showuserusername')) {
+            array_unshift($fields, 'username');
+        }
+        if ($has_ppsft_class and $this->get_pref('showuseridnumber')) {
+            array_unshift($fields, 'idnumber');
+        }
+
+        return $fields;
+    }
+
     /**
      * pulls out the userids of the users to be display, and sorts them
      */
@@ -415,8 +451,19 @@ class grade_report_grader extends grade_report {
         // Limit to users with an active enrollment.
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
-        // Fields we need from the user table.
-        $userfields = user_picture::fields('u', get_extra_user_fields($this->context));
+        // 20131107 Colin. Using custom get_extra_user_fields.
+        $extrafields = $this->get_extra_user_fields(true);
+
+        $userfields = user_picture::fields('u', $extrafields);
+
+        // 20131107 Colin. Remove u prefix from ppsftsection. The user_picture::fields call adds the 'u' prefix
+        //          because it assumes that all extrafields come from the user table.
+        $userfields = str_replace('u.ppsft', 'ppsft', $userfields);
+        // 20131209 mart0969. Add correct prefix to groups for similar reason.  SQL will have groups coming
+        //          from table alias 'grp'.
+        $userfields = str_replace('u.groups', 'grp.groups', $userfields);
+
+        $sortjoin = $sort = $params = null;
 
         // We want to query both the current context and parent contexts.
         list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
@@ -437,9 +484,30 @@ class grade_report_grader extends grade_report {
                 case 'firstname':
                     $sort = "u.firstname $this->sortorder, u.lastname $this->sortorder";
                     break;
+
+                // SDLC-84396 20120220 hoang027 >>> handle sorting by username and ppsftsection
+                case 'username':
+                    $sort = "u.username {$this->sortorder}";
+                    break;
+
+                case 'ppsftsection':
+                    $sort = "ppsftsection {$this->sortorder}";
+                    break;
+                // <<< SDLC-84396
+
                 case 'email':
                     $sort = "u.email $this->sortorder";
                     break;
+
+                // STRY0010038 20131209 mart0969 >>> handle sorting by groups
+                case 'groups':
+                    if ($this->get_pref('showgroups')) {
+                        $sort = "grp.groups {$this->sortorder}";
+                    } else {
+                        $sort = "u.lastname $this->sortorder, u.firstname $this->sortorder";
+                    }
+                    break;
+
                 case 'idnumber':
                 default:
                     $sort = "u.idnumber $this->sortorder";
@@ -448,6 +516,21 @@ class grade_report_grader extends grade_report {
 
             $params = array_merge($gradebookrolesparams, $this->userwheresql_params, $this->groupwheresql_params, $enrolledparams, $relatedctxparams);
         }
+
+        // STRY0010038 20131209 mart0969 >>> If groups are selected, add group memberships to query
+        if ($this->get_pref('showgroups')) {
+            $groupsql = "LEFT JOIN (
+                            SELECT grm.userid,
+                            GROUP_CONCAT(grps.name ORDER BY grps.name SEPARATOR ', ') AS groups FROM
+                             {groups_members} AS grm JOIN {groups} AS grps ON grm.groupid = grps.id
+                             WHERE grps.courseid = :courseid
+                             GROUP BY grm.userid
+                        ) AS grp ON u.id = grp.userid ";
+            $params['courseid'] = $this->course->id;
+        } else {
+            $groupsql = "";
+        }
+        // <<< STRY0010038
 
         $sql = "SELECT $userfields
                   FROM {user} u
@@ -459,11 +542,37 @@ class grade_report_grader extends grade_report {
                              FROM {role_assignments} ra
                             WHERE ra.roleid IN ($this->gradebookroles)
                               AND ra.contextid $relatedctxsql
-                       ) rainner ON rainner.userid = u.id
-                   AND u.deleted = 0
-                   $this->userwheresql
-                   $this->groupwheresql
-              ORDER BY $sort";
+
+                       ) rainner ON rainner.userid = u.id " .
+
+                       // SDLC-84396 20120220 hoang027 >>> retrieve related PeopleSoft sections too
+                       "LEFT JOIN (
+                           SELECT ppsft_class_enrol.userid AS userid,
+                                CONCAT(ppsft_classes.subject,
+                                       ppsft_classes.catalog_nbr, '_',
+                                       ppsft_classes.section) AS ppsftsection
+                           FROM {ppsft_class_enrol} ppsft_class_enrol
+                                INNER JOIN {ppsft_classes} ppsft_classes
+                                    ON ppsft_classes.id = ppsft_class_enrol.ppsftclassid
+                                INNER JOIN {enrol_umnauto_classes} enrol_umnauto_classes
+                                    ON ppsft_classes.id = enrol_umnauto_classes.ppsftclassid
+                                INNER JOIN {enrol} enrol
+                                    ON enrol_umnauto_classes.enrolid = enrol.id
+                           WHERE  enrol.courseid = :ppsft_course_id AND
+                                  ppsft_class_enrol.status = 'E'
+
+                           GROUP BY userid
+                       ) ppsft_enrol ON u.id = ppsft_enrol.userid " .
+                       // STRY0010038 20131209 mart0969 >>> Get group memberships too
+                       "$groupsql
+                       WHERE u.deleted = 0
+                       {$this->userwheresql}
+                       {$this->groupwheresql}
+                   ORDER BY {$sort}";
+
+        $params['ppsft_course_id'] = $this->course->id;
+        // <<< SDLC-84396
+
         $studentsperpage = $this->get_students_per_page();
         $this->users = $DB->get_records_sql($sql, $params, $studentsperpage * $this->page, $studentsperpage);
 
@@ -588,7 +697,11 @@ class grade_report_grader extends grade_report {
         $strfeedback  = $this->get_lang_string("feedback");
         $strgrade     = $this->get_lang_string('grade');
 
-        $extrafields = get_extra_user_fields($this->context);
+        // 20131107 Colin. Using custom get_extra_user_fields. Setting member variable
+        //                 in same place as laegrader for consistency.
+        // 20141103 Colin. TODO: Remove laegrader reference above and reconsider member variable.
+        $extrafields = $this->get_extra_user_fields(true);
+        $this->extrafields = $extrafields;
 
         $arrows = $this->get_sort_arrows($extrafields);
 

@@ -74,6 +74,29 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('grade_report_showuserimage', get_string('showuserimage', 'grades'),
                                                 get_string('showuserimage_help', 'grades'), 1));
 
+    // SDLC-84396 20120220 hoang027 >>> add showuseridnumber, showuserusername, and showppsftsection
+    $settings->add(new admin_setting_configcheckbox('grade_report_showuseridnumber', get_string('showuseridnumber', 'grades'),
+                                                get_string('showuseridnumber_help', 'grades'), 0));
+
+    $settings->add(new admin_setting_configcheckbox('grade_report_showuserusername', get_string('showuserusername', 'grades'),
+                                                get_string('showuserusername_help', 'grades'), 0));
+
+    $settings->add(new admin_setting_configcheckbox('grade_report_showppsftsection', get_string('showppsftsection', 'grades'),
+                                                get_string('showppsftsection_help', 'grades'), 0));
+    // <<< SDLC-84396
+
+    // STRY0010031 20131030 mart0969 >>> add showemail
+    $settings->add(new admin_setting_configcheckbox('grade_report_showemail', get_string('showemail', 'grades'),
+                                                get_string('showemail_help', 'grades'), 1));
+
+    // <<< STRY0010031
+
+    // STRY0010038 20131206 mart0969 >>> add showgroups
+    $settings->add(new admin_setting_configcheckbox('grade_report_showgroups', get_string('showgroups', 'grades'),
+                                                get_string('showgroups_help', 'grades'), 1));
+
+    // <<< STRY0010038
+
     $settings->add(new admin_setting_configcheckbox('grade_report_showactivityicons', get_string('showactivityicons', 'grades'),
                                                 get_string('showactivityicons_help', 'grades'), 1));
 

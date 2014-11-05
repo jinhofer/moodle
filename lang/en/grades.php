@@ -754,6 +754,40 @@ $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
 
+// SDLC-84396 20120220 hoang027 >>> add strings for showuseridnumber, showuserusername, showppsftsection, and repeatheader
+$string['showuseridnumber'] = 'Show user ID numbers';
+$string['showuseridnumber_help'] = 'If enabled, user ID numbers are shown in an additional column.';
+$string['showuserusername'] = 'Show user usernames';
+$string['showuserusername_help'] = 'If enabled, user usernames are shown in an additional column.';
+$string['showppsftsection'] = 'Show PeopleSoft sections';
+$string['showppsftsection_help'] = 'If enabled, PeopleSoft section numbers are shown in an additional column.';
+// <<< SDLC-84396
+
+// STRY0010031 20131030 mart0969 >> add strings for showemail
+$string['showemail'] = 'Show email addresses';
+$string['showemail_help'] = 'If enabled, email addresses are shown in a column on the grader report.';
+// <<< STRY0010031
+
+// STRY0010038 20131206 mart0969 >>> add strings for show groups
+$string['showgroups'] = 'Show groups';
+$string['showgroups_help'] = 'If enabled, groups will be shown on the grader report.';
+// <<< STRY0010038
+
+//STRY0010310 mart0969 20140424 - Add strings for additional grade export columns
+$string['extrafields'] = 'Additional columns to include';
+$string['ppsftsection'] = 'PeopleSoft section';
+// <<< STRY0010310
+
+// 20141031 Colin. Copied from similar strings in gradeexport_ppsft to avoid bad dependency (when moved to 2.8).
+$string['gradeexportgradingbasis'] = "Student's grading basis";
+$string['gradeexportlastaccess'] = 'Last date of attendance<br />(last date student accessed course site)';
+// <<< 20141031 Colin
+
+// 20141031 Colin. Can now attempt to get export strings for extrafields from grades, first.  See grade/export/lib.php.
+$string['courselastaccess'] = 'Last access';
+$string['gradingbasis'] = 'Grading basis';
+// <<< 20141031 Colin
+
 // Deprecated since Moodle 2.8
 
 $string['categoriesedit'] = 'Edit setup';

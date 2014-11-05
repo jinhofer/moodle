@@ -52,6 +52,10 @@ class grade_export_txt extends grade_export {
         $strgrades = get_string('grades');
         $profilefields = grade_helper::get_user_profile_fields($this->course->id, $this->usercustomfields);
 
+        //STRY0010204 - mart0969 20140307 - Use new function to get extra fields
+        $extrafields = $this->get_extra_fields();
+        $profilefields = array_merge($profilefields,$extrafields);
+
         $shortname = format_string($this->course->shortname, true, array('context' => context_course::instance($this->course->id)));
         $downloadfilename = clean_filename("$shortname $strgrades");
         $csvexport = new csv_export_writer($this->separator);

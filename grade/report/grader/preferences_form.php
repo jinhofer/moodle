@@ -27,6 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->dirroot.'/enrol/umnauto/lib.php');
 
 /**
  * First implementation of the preferences in the form of a moodleform.
@@ -45,6 +46,10 @@ class grader_report_preferences_form extends moodleform {
         $canviewhidden = has_capability('moodle/grade:viewhidden', $context);
 
         $checkbox_default = array(GRADE_REPORT_PREFERENCE_DEFAULT => '*default*', 0 => get_string('no'), 1 => get_string('yes'));
+
+        // SDLC-84396 20120220 hoang027 >>> check if the course has PeopleSoft class
+        $has_ppsft_class = count(enrol_umnauto_get_course_ppsft_classes($course->id)) > 0;
+        // <<< SDLC-84396
 
         $advanced = array();
 /// form definition with preferences defaults
@@ -108,6 +113,19 @@ class grader_report_preferences_form extends moodleform {
                                                                        GRADE_REPORT_AGGREGATION_POSITION_FIRST => get_string('positionfirst', 'grades'),
                                                                        GRADE_REPORT_AGGREGATION_POSITION_LAST => get_string('positionlast', 'grades'));
             $preferences['prefgeneral']['enableajax'] = $checkbox_default;
+
+            // SDLC-84396 20120220 hoang027 >>> add idnumber, username, and PeopleSoft section options
+            $preferences['prefshow']['showuseridnumber'] = $checkbox_default;
+            $preferences['prefshow']['showuserusername'] = $checkbox_default;
+            $preferences['prefshow']['showppsftsection'] = $checkbox_default;
+            // <<< SDLC-84396
+
+            // STRY0010031 20131030 mart0969 >>> add option for showing email
+            $preferences['prefshow']['showemail'] = $checkbox_default;
+            // <<< STRY0010031
+            // STRY0010038 20131206 mart0969 >>> add option for showing groups
+            $preferences['prefshow']['showgroups'] = $checkbox_default;
+            // <<< STRY0010038
 
             $preferences['prefshow']['showuserimage'] = $checkbox_default;
             $preferences['prefshow']['showactivityicons'] = $checkbox_default;
@@ -179,12 +197,27 @@ class grader_report_preferences_form extends moodleform {
                 }
                 $mform->setDefault($full_pref, $pref_value);
                 $mform->setType($full_pref, PARAM_ALPHANUM);
+
+                // SDLC-84396 20120220 hoang027 >>>
+                // if the course has no PeopleSoft class, disable idnumber and ppsftsection
+                if ( !$has_ppsft_class && ($pref == 'showuseridnumber' || $pref == 'showppsftsection') ) {
+                    $mform->setDefault($full_pref, 0);
+                    $mform->disabledIf($full_pref, 'has_ppsft', 'eq', '0');
+                }
+                // <<< SDLC-84396
             }
         }
 
         foreach($advanced as $name) {
             $mform->setAdvanced('grade_report_'.$name);
         }
+
+        // SDLC-84396 201220 hoang027 >>>
+        // fixed value hidden input, serves as condition for disabledIf
+        $mform->addElement('hidden', 'has_ppsft');
+        $mform->setType('has_ppsft', PARAM_INT);
+        $mform->setDefault('has_ppsft', 0);
+        // <<< SDLC-84396
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

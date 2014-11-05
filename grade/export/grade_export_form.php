@@ -20,6 +20,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once $CFG->libdir.'/formslib.php';
+require_once $CFG->dirroot.'/enrol/umnauto/lib.php';
 
 class grade_export_form extends moodleform {
     function definition() {
@@ -190,6 +191,46 @@ class grade_export_form extends moodleform {
             $mform->disabledIf('iprestriction', 'key', 'noteq', 1);
             $mform->disabledIf('validuntil', 'key', 'noteq', 1);
         }
+
+        //STRY0010310 mart0969 20140424 - Add section for extra grade fields
+        $mform->addElement('header','extrafields',get_string('extrafields','grades'));
+        $mform->setExpanded('extrafields');
+        //Check whether this course has a PeopleSoft class.
+        if (!isset($has_ppsft_class)) {
+            $has_ppsft_class = count(enrol_umnauto_get_course_ppsft_classes($COURSE->id)) > 0;
+        }
+        //User name
+        $mform->addElement('checkbox','extrafields[username]',get_string('username'));
+        $mform->setDefault('extrafields[username]',
+                           get_user_preferences('grade_report_showuserusername', !empty($CFG->grade_report_showuserusername)));
+        //ID Number
+        if ($has_ppsft_class && has_capability('gradereport/grader:view', $coursecontext)) {
+            $mform->addElement('checkbox','extrafields[idnumber]',get_string('idnumber'));
+            $mform->setDefault('extrafields[idnumber]',
+                               get_user_preferences('grade_report_showuseridnumber', !empty($CFG->grade_report_showuseridnumber)));
+        }
+        //Email
+        $mform->addElement('checkbox','extrafields[email]',get_string('email'));
+        $mform->setDefault('extrafields[email]',
+                           get_user_preferences('grade_report_showemail', !empty($CFG->grade_report_showemail)));
+        //PPSFT Section
+        if ($has_ppsft_class) {
+            $mform->addElement('checkbox','extrafields[ppsftsection]',get_string('ppsftsection','grades'));
+            $mform->setDefault('extrafields[ppsftsection]',
+                               get_user_preferences('grade_report_showppsftsection', !empty($CFG->grade_report_showppsftsection)));
+        }
+        //Groups
+        $mform->addElement('checkbox','extrafields[groups]',get_string('groups'));
+        $mform->setDefault('extrafields[groups]',
+                           get_user_preferences('grade_report_showgroups', !empty($CFG->grade_report_showgroups)));
+        //Grade basis
+        if ($has_ppsft_class) {
+            $mform->addElement('checkbox','extrafields[gradingbasis]', get_string('gradeexportgradingbasis', 'grades'));
+        }
+        //Last date of attendance
+        $mform->addElement('checkbox','extrafields[courselastaccess]', get_string('gradeexportlastaccess', 'grades'));
+        //<<< End STRY0010310
+
 
         $mform->addElement('hidden', 'id', $COURSE->id);
         $mform->setType('id', PARAM_INT);

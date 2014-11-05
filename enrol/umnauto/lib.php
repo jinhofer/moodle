@@ -489,4 +489,22 @@ function enrol_umnauto_supports($feature) {
     }
 }
 
+/**
+ * get the associated PeopleSoft classes for a Moodle course
+ * @param int $course_id
+ * @return array of ppsft_classes records
+ */
+function enrol_umnauto_get_course_ppsft_classes($course_id) {
+    global $DB;
+
+    $query = 'SELECT ppsft_classes.*
+              FROM {enrol} enrol
+                   INNER JOIN {enrol_umnauto_classes} enrol_umnauto_classes
+                          ON enrol_umnauto_classes.enrolid = enrol.id
+                   INNER JOIN {ppsft_classes} ppsft_classes
+                          ON enrol_umnauto_classes.ppsftclassid = ppsft_classes.id
+              WHERE enrol.courseid = :course_id';
+
+    return $DB->get_records_sql($query, array('course_id' => $course_id));
+}
 
