@@ -25,3 +25,7 @@
 
 $string['csv:view'] = 'Import grades from CSV';
 $string['pluginname'] = 'CSV file';
+
+// STRY0010137 Colin 20141106.  Copied from dev26.
+$string['nogradeitemmapped'] = 'Please map at least one grade item and resubmit your request.';
+

@@ -445,6 +445,12 @@ class gradeimport_csv_load_data {
             }
         }
 
+        // STRY0010137 Colin 20140210. Display error message if user did not map any grade_items.
+        //             Colin 20141106. Adapted this change for 2.8.
+        if (empty($map) or count(preg_grep('/^0$/', $map, PREG_GREP_INVERT))==0) {
+            $this->cleanup_import(get_string('nogradeitemmapped', 'gradeimport_csv'));
+        }
+
         // If mapping information is supplied.
         $map[clean_param($formdata->mapfrom, PARAM_RAW)] = clean_param($formdata->mapto, PARAM_RAW);
 
