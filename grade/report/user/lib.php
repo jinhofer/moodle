@@ -809,8 +809,36 @@ class grade_report_user extends grade_report {
         }
 
         $html .= "
+                </tr>";
+        //STRY0010038 - mart0969 12102013 - Add group memberships
+        $findgroups = array();
+        $findgroups = groups_get_user_groups($this->courseid,$this->user->id);
+        $allgroups = array();
+        $allgroups = $findgroups['0'];
+        if (count($allgroups) > 0) {
+            $usergroups = array();
+            foreach ($allgroups as $group) {
+                $usergroups[] = groups_get_group_name($group);
+            }
+            sort($usergroups);
+            $i = 0;
+            $fieldcell = "";
+            foreach ($usergroups as $groupname) {
+                if ($i > 0) {
+                    $fieldcell .= '; ';
+                }
+                $fieldcell .= $groupname;
+                $i++;
+            }
+            $html .= "
+                <tr>
+                    <th colspan='100%' style='text-align:left;'>Member of group(s): $fieldcell</th>
                 </tr>
-            </thead>
+                ";
+        }
+        //<<< STRY0010038
+        $html .=
+           " </thead>
             <tbody>\n";
 
         /// Print out the table data
