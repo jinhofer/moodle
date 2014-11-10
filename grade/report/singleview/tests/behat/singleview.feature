@@ -15,9 +15,15 @@ Feature: We can use Single view
       | student2 | Student | 2 | student1@asd.com | s2 | holly |
       | student3 | Student | 3 | student1@asd.com | s3 | anna |
       | student4 | Student | 4 | student1@asd.com | s4 | zac |
+    And the following "scales" exist:
+      | name | scale |
+      | Test Scale | Disappointing, Good, Very good, Excellent |
     And the following "grade items" exist:
-      | itemname | course  |
-      | new grade item 1 | C1 |
+      | itemname | course | gradetype | scale |
+      | new grade item 1 | C1 | Scale | Test Scale |
+    And the following "scales" exist:
+      | name       | scale                                     |
+      | Test Scale | Disappointing, Good, Very good, Excellent |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -35,6 +41,9 @@ Feature: We can use Single view
       | assign | C1 | a2 | Test assignment two | Submit something! | 100 |
       | assign | C1 | a3 | Test assignment three | Submit something! | 150 |
       | assign | C1 | a4 | Test assignment four | Submit nothing! | 150 |
+    And the following "grade items" exist:
+      | itemname | course | gradetype |
+      | Test grade item | C1 | Scale |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Grades"
@@ -49,7 +58,9 @@ Feature: We can use Single view
         | Feedback for Test assignment one | test data |
     And I click on "Exclude for Test assignment four" "checkbox"
     And I press "Update"
-    Then the following should exist in the "generaltable" table:
+    Then I should see "Grades were set for 2 items"
+    And I press "Continue"
+    And the following should exist in the "generaltable" table:
         | Test assignment four |
         | excluded |
     And the following should exist in the "generaltable" table:
@@ -62,10 +73,20 @@ Feature: We can use Single view
         | Feedback for james (Student) 1 | test data2 |
     And I click on "Exclude for holly (Student) 2" "checkbox"
     And I press "Update"
+    Then I should see "Grades were set for 2 items"
+    And I press "Continue"
     And the following should exist in the "generaltable" table:
         | Test assignment three |
         | 12.05 |
         | Excluded |
+    And I click on "Single view" "link"
+    And I click on "new grade item 1" "option"
+    And I click on "Very good" "option"
+    And I press "Update"
+    Then I should see "Grades were set for 1 items"
+    And I press "Continue"
+    And the following should exist in the "generaltable" table:
+        | Grade for james (Student) 1 | "Very good" |
 
   Scenario: Single view links work on grade report.
     Given I follow "Single view for Test assignment one"
@@ -73,6 +94,16 @@ Feature: We can use Single view
     Then I follow "Grader report"
     And I follow "Single view for Student 1"
     Then I should see "Student 1"
+
+  @javascript
+  Scenario: I can bulk update grades.
+    Given I follow "Single view for Student 1"
+    Then I should see "Student 1"
+    When I click on "All grades" "option"
+    And I set the field "Insert value" to "1.0"
+    And I click on "Perform bulk insert" "checkbox"
+    And I press "Update"
+    Then I should see "Grades were set for 9 items"
 
   Scenario: Navigation works in the Single view.
     Given I follow "Single view for Student 1"

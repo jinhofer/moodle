@@ -555,6 +555,7 @@ table.quizreviewsummary td.cell {
     right: auto;
     left: 0;
 }
+
 #page-mod-quiz-edit .slotnumber {
     background-color: #D3D3D3;
     text-align: center;
@@ -912,4 +913,9 @@ table#categoryquestions {
 .questionbank .categorypagingbarcontainer,
 .questionbank .categoryselectallcontainer {
     background-color: #FFF;
+}
+
+/* Base theme needs extra support. */
+#page-mod-quiz-edit ul.slots li.section ul.section {
+    list-style: none;
 }

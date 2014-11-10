@@ -3044,6 +3044,7 @@ EOD;
             $returnstr
         );
         $am->set_alignment(action_menu::TR, action_menu::BR);
+        $am->set_nowrap_on_items();
         if ($withlinks) {
             $navitemcount = count($opts->navitems);
             $idx = 0;
@@ -3718,6 +3719,12 @@ class core_renderer_cli extends core_renderer {
         }
         return "!! $message !!\n";
     }
+
+    /**
+     * There is no footer for a cli request, however we must override the
+     * footer method to prevent the default footer.
+     */
+    public function footer() {}
 }
 
 

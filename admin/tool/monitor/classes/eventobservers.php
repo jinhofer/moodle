@@ -53,13 +53,9 @@ class eventobservers {
      * @param \core\event\course_deleted $event The course deleted event.
      */
     public static function course_deleted(\core\event\course_deleted $event) {
-        $rules = rule_manager::get_rules_by_courseid($event->courseid);
-        $context = null;
-        if ($event->contextlevel == CONTEXT_COURSE) {
-            $context = $event->get_context();
-        }
+        $rules = rule_manager::get_rules_by_courseid($event->courseid, 0, 0, false);
         foreach ($rules as $rule) {
-            rule_manager::delete_rule($rule->id, $context);
+            rule_manager::delete_rule($rule->id, $event->get_context());
         }
     }
 
@@ -72,6 +68,9 @@ class eventobservers {
      * @param \core\event\base $event event object
      */
     public static function process_event(\core\event\base $event) {
+        if (!get_config('tool_monitor', 'enablemonitor')) {
+            return; // The tool is disabled. Nothing to do.
+        }
 
         if (empty(self::$instance)) {
             self::$instance = new static();
@@ -94,6 +93,11 @@ class eventobservers {
      * @param \core\event\base $event
      */
     protected function buffer_event(\core\event\base $event) {
+
+        // If there are no subscriptions for this event do not buffer it.
+        if (!\tool_monitor\subscription_manager::event_has_subscriptions($event->eventname, $event->courseid)) {
+            return;
+        }
 
         $eventdata = $event->get_data();
         $eventobj = new \stdClass();
@@ -129,6 +133,7 @@ class eventobservers {
         $select = "SELECT COUNT(id) FROM {tool_monitor_events} ";
         $now = time();
         $messagestosend = array();
+        $allsubids = array();
 
         // Let us now process the events and check for subscriptions.
         foreach ($events as $eventobj) {
@@ -136,6 +141,7 @@ class eventobservers {
             $idstosend = array();
             foreach ($subscriptions as $subscription) {
                 $starttime = $now - $subscription->timewindow;
+                $starttime = ($starttime > $subscription->lastnotificationsent) ? $starttime : $subscription->lastnotificationsent;
                 if ($subscription->courseid == 0) {
                     // Site level subscription. Count all events.
                     $where = "eventname = :eventname AND timecreated >  :starttime";
@@ -188,7 +194,16 @@ class eventobservers {
             }
             if (!empty($idstosend)) {
                 $messagestosend[] = array('subscriptionids' => $idstosend, 'event' => $eventobj);
+                $allsubids = array_merge($allsubids, $idstosend);
             }
+        }
+
+        if (!empty($allsubids)) {
+            // Update the last trigger flag.
+            list($sql, $params) = $DB->get_in_or_equal($allsubids, SQL_PARAMS_NAMED);
+            $params['now'] = $now;
+            $sql = "UPDATE {tool_monitor_subscriptions} SET lastnotificationsent = :now WHERE id $sql";
+            $DB->execute($sql, $params);
         }
 
         // Schedule a task to send notification.

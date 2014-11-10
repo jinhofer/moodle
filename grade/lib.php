@@ -1371,32 +1371,34 @@ class grade_structure {
      * @param bool  $icon Whether or not to display an icon with this header
      * @param bool  $spacerifnone return spacer if no icon found
      * @param bool  $withdescription Show description if defined by this item.
+     * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
+     *                         instead of "Category total" or "Course total"
      *
      * @return string header
      */
-    public function get_element_header(&$element, $withlink=false, $icon=true, $spacerifnone=false, $withdescription=false) {
+    public function get_element_header(&$element, $withlink = false, $icon = true, $spacerifnone = false,
+        $withdescription = false, $fulltotal = false) {
         $header = '';
 
         if ($icon) {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
-        $header .= $element['object']->get_name();
+        $header .= $element['object']->get_name($fulltotal);
 
         if ($element['type'] != 'item' and $element['type'] != 'categoryitem' and
             $element['type'] != 'courseitem') {
             return $header;
         }
 
-        if ($withlink) {
-            $url = $this->get_activity_link($element);
-            if ($url) {
-                $a = new stdClass();
-                $a->name = get_string('modulename', $element['object']->itemmodule);
-                $title = get_string('linktoactivity', 'grades', $a);
+        if ($withlink && $url = $this->get_activity_link($element)) {
+            $a = new stdClass();
+            $a->name = get_string('modulename', $element['object']->itemmodule);
+            $title = get_string('linktoactivity', 'grades', $a);
 
-                $header = html_writer::link($url, $header, array('title' => $title));
-            }
+            $header = html_writer::link($url, $header, array('title' => $title));
+        } else {
+            $header = html_writer::span($header);
         }
 
         if ($withdescription) {
