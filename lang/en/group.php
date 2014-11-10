@@ -180,3 +180,13 @@ $string['toomanygroups'] = 'Insufficient users to populate this number of groups
 $string['usercount'] = 'User count';
 $string['usercounttotal'] = 'User count ({$a})';
 $string['usergroupmembership'] = 'Selected user\'s membership:';
+
+// SDLC-81781 20110610 hoang027 >>>
+$string['createguide'] = 'Visit the <a href="http://www1.umn.edu/moodle/instructor/guides/groups.html">Moodle User Guide page on Groups</a> to learn about three methods to create groups.';
+$string['ppsft_autogroup_btn'] = 'Create/Update groups based on PeopleSoft sections once';
+$string['ppsft_auto_update'] = 'Update PeopleSoft based groups automatically';
+$string['ppsft_term_in_name'] = 'Include term in group names';
+$string['save_autogroup_setting_btn'] = 'Save settings';
+$string['error_create_ppsft'] = 'Error creating/updating PeopleSoft based groups';
+$string['error_no_autogroup_setting'] = 'Cannot get PeopleSoft auto-group setting for this course';
+// <<< SDLC-81781

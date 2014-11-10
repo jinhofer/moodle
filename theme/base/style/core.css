@@ -620,6 +620,13 @@ input#id_externalurl {direction:ltr;}
 #group-usersummary {width: 14em;}
 .groupselector {margin-top: 3px;margin-bottom: 3px;display: inline-block;}
 
+/* SDLC-81781 20110610 hoang027 >>> */
+.groupmanagementtable #rb_ppsft_autogroup_setting_yes,
+.groupmanagementtable #rb_ppsft_autogroup_setting_no {margin-left:1em;margin-right:0.2em;}
+.groupmanagementtable #update_ppsftautogroup_settingform {margin-left:1.5em;}
+#page-group-index #groupcreateguide {width: 90%;text-align:left;margin-left:auto;margin-right:auto;margin-bottom: 1em;}
+/* <<< SDLC-81781 */
+
 /**
  * Login
  */
