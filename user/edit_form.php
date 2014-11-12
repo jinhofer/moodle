@@ -85,7 +85,7 @@ class user_edit_form extends moodleform {
         profile_definition($mform, $userid);
 
         // SDLC-84396 20110726 hoang027 >>> require moodle/user:update capability to edit idnumber and timezone
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $systemcontext = context_system::instance();
         if (!has_capability('moodle/user:update', $systemcontext)) {
             $mform->removeElement('idnumber');  // remove idnumber
 
