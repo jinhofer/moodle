@@ -24,6 +24,14 @@
     text-align: right;
 }
 
+/* Colin. The 8.5em left margin is intended to match the same setting
+   for ".que .content" in theme/base/styles/question.css. */
+#page-mod-quiz-attempt #responseform div.savebtn { margin-left: 8.5em; margin-bottom: 1em; }
+
+/* Colin. Reducing margin below question div because we now have save button. */
+#page-mod-quiz-attempt #responseform div.que { margin-bottom: 1em; }
+
+
 body.jsenabled .questionflagcheckbox {
     display: none;
 }

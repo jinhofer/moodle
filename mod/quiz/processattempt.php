@@ -56,7 +56,15 @@ if ($next) {
 if ($page == -1) {
     $nexturl = $attemptobj->summary_url();
 } else {
-    $nexturl = $attemptobj->attempt_url(null, $page);
+    // 20120805 Colin. Added a save button beneath each question. Here
+    // we set the attempt URL to take the user back to the question
+    // from which they hit the save button.
+    $saveparam = optional_param_array('save', array(), PARAM_INT);
+    //20141112 btindell - splitting up calls, removes notice in error log
+    $keys = array_keys($saveparam);  
+    $saveslot = array_shift($keys);
+
+    $nexturl = $attemptobj->attempt_url($saveslot, $page);
     if ($scrollpos !== '') {
         $nexturl->param('scrollpos', $scrollpos);
     }

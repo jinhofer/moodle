@@ -461,11 +461,22 @@ class mod_quiz_renderer extends plugin_renderer_base {
         foreach ($slots as $slot) {
             $output .= $attemptobj->render_question($slot, false,
                     $attemptobj->attempt_url($slot, $page));
+
+            // 20120805 Colin. Adding save button beneath each question.
+            $output .= html_writer::start_tag('div', array('class' => 'savebtn'));
+            if ($attemptobj->is_real_question($slot)) {
+                $output .= html_writer::empty_tag('input',
+                                                  array('type' => 'submit',
+                                                        'name' => "save[$slot]",
+                                                        'value' => get_string('savemyanswers', 'mod_quiz')));
+            }
+            $output .= html_writer::end_tag('div');
         }
 
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
+        // 20120819 Colin. Changed to new attempt page-specific next string.
         $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'next',
-                'value' => get_string('next')));
+                'value' => get_string('nextattemptpage', 'quiz')));
         $output .= html_writer::end_tag('div');
 
         // Some hidden fields to trach what is going on.
