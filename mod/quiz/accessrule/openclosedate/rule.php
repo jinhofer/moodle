@@ -44,6 +44,7 @@ class quizaccess_openclosedate extends quiz_access_rule_base {
 
     public function description() {
         $result = array();
+        // 20130118 Colin. Added close date to unopened branch and opens date to closed branch.
         if ($this->timenow < $this->quiz->timeopen) {
             $result[] = get_string('quiznotavailable', 'quizaccess_openclosedate',
                     userdate($this->quiz->timeopen));
@@ -52,6 +53,9 @@ class quizaccess_openclosedate extends quiz_access_rule_base {
             }
 
         } else if ($this->quiz->timeclose && $this->timenow > $this->quiz->timeclose) {
+            if ($this->quiz->timeopen) {
+                $result[] = get_string('quizopenedon', 'quiz', userdate($this->quiz->timeopen));
+            }
             $result[] = get_string('quizclosed', 'quiz', userdate($this->quiz->timeclose));
 
         } else {
