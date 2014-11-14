@@ -3648,6 +3648,13 @@ class restore_create_categories_and_questions extends restore_structure_step {
             return; // No mapping = this question doesn't need to be created/mapped
         }
 
+        // SDLC 84120 20110725 Colin. Course request customizations. Question names
+        //      that originated from other products sometimes have tags and are too long.
+        //      If stripping tags leaves the string empty, then use a hash. Also,
+        //      limit length to 120 characters.
+        $tempname = shorten_text(trim(strip_tags($data->name)), 120);
+        $data->name = empty($tempname) ? md5($data->name) : $tempname;
+
         // Get the mapped category (cannot use get_new_parentid() because not
         // all the categories have been created, so it is not always available
         // Instead we get the mapping for the question->parentitemid because
