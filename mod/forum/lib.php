@@ -90,8 +90,28 @@ function forum_add_instance($forum, $mform = null) {
         $forum->assesstimefinish = 0;
     }
 
+    //STRY0010467 mart0969 20140807 - Remove subplugin settings from data, for updating forum table
+    //  Needs to be done so that insert_record below works properly.
+    $subplugin_settings = array();
+    foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+        $plugin_settings_to_remove = component_callback("forumsettings_$pluginname", 'settings_to_remove');
+        foreach ($plugin_settings_to_remove as $setting) {
+            $subplugin_settings[$setting] = isset($forum->$setting) ? $forum->$setting : 0;
+            unset($forum->$setting);
+        }
+    }
+
     $forum->id = $DB->insert_record('forum', $forum);
     $modcontext = context_module::instance($forum->coursemodule);
+
+    //STRY0010467 mart0969 20140807 - Re-add subplugin settings to data
+    foreach ($subplugin_settings as $setting => $value) {
+        $forum->$setting = $value;
+    }
+    //STRY0010467 mart0969 20140807 - Update subplugin settings
+    foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+        component_callback("forumsettings_$pluginname", 'update_data', array($forum));
+    }
 
     if ($forum->type == 'single') {  // Create related discussion.
         $discussion = new stdClass();
@@ -229,7 +249,27 @@ function forum_update_instance($forum, $mform) {
         $DB->update_record('forum_discussions', $discussion);
     }
 
+    // STRY0010467 mart0969 20140807 - Remove subplugin settings from $forum. Must be done so that
+    //  update_record below works properly.
+    $subplugin_settings = array();
+    foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+        $plugin_settings_to_remove = component_callback("forumsettings_$pluginname", 'settings_to_remove');
+        foreach ($plugin_settings_to_remove as $setting) {
+            $subplugin_settings[$setting] = $forum->$setting;
+            unset($forum->$setting);
+        }
+    }
+
     $DB->update_record('forum', $forum);
+
+    //STRY0010467 mart0969 20140807 - Re-add subplugin settings to data for update
+    foreach ($subplugin_settings as $setting => $value) {
+        $forum->$setting = $value;
+    }
+    //STRY0010467 mart0969 20140807 - Update sublugin settings
+    foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+        component_callback("forumsettings_$pluginname", 'update_data', array($forum));
+    }
 
     $modcontext = context_module::instance($forum->coursemodule);
     if (($forum->forcesubscribe == FORUM_INITIALSUBSCRIBE) && ($oldforum->forcesubscribe <> $forum->forcesubscribe)) {
@@ -295,6 +335,11 @@ function forum_delete_instance($id) {
     }
 
     forum_grade_item_delete($forum);
+
+    //STRY0010467 mart0969 20140807 - Delete subplugin data
+    foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+        component_callback("forumsettings_$pluginname", 'delete_data', array($forum->id));
+    }
 
     return $result;
 }
@@ -3334,7 +3379,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
             // The first post in single simple is the forum description.
             $commands[] = array('url'=>new moodle_url('/course/modedit.php', array('update'=>$cm->id, 'sesskey'=>sesskey(), 'return'=>1)), 'text'=>$str->edit);
         }
-    } else if (($ownpost && $age < $CFG->maxeditingtime) || $cm->cache->caps['mod/forum:editanypost']) {
+    // STRY0010206 mart0969 20140416 - Don't show the edit link if it's after the cutoff date.
+    // STRY0010467 mart0969 20140807 - Change to use cutoffdate subplugin
+    } else if ((($ownpost && $age < $CFG->maxeditingtime) || $cm->cache->caps['mod/forum:editanypost']) &&
+            !component_callback("forumsettings_cutoffdate", 'check_date', array($forum->id, $modcontext))) {
         $commands[] = array('url'=>new moodle_url('/mod/forum/post.php', array('edit'=>$post->id)), 'text'=>$str->edit);
     }
 
@@ -3344,7 +3392,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     if ($forum->type == 'single' and $discussion->firstpost == $post->id) {
         // Do not allow deleting of first post in single simple type.
-    } else if (($ownpost && $age < $CFG->maxeditingtime && $cm->cache->caps['mod/forum:deleteownpost']) || $cm->cache->caps['mod/forum:deleteanypost']) {
+    // STRY0010206 mart0969 20140416 - Don't show delete link if it's after the cutoff date
+    // STRY0010467 mart0969 20140807 - Change to use cutoffdate subplugin
+    } else if ((($ownpost && $age < $CFG->maxeditingtime && $cm->cache->caps['mod/forum:deleteownpost']) || $cm->cache->caps['mod/forum:deleteanypost']) &&
+                !component_callback("forumsettings_cutoffdate", 'check_date', array($forum->id, $modcontext))) {
         $commands[] = array('url'=>new moodle_url('/mod/forum/post.php', array('delete'=>$post->id)), 'text'=>$str->delete);
     }
 
@@ -4927,6 +4978,13 @@ function forum_user_can_post_discussion($forum, $currentgroup=null, $unused=-1, 
         return false;
     }
 
+    // STRY0010206 mart0969 20140416 - If a cutoff date is set and we are past it and the user can't post after the cutoff
+    // date, then don't allow the user to post.
+    // STRY0010467 mart0969 20140807 - Change to use cutoffdate subplugin
+    if (component_callback("forumsettings_cutoffdate", 'check_date', array($forum->id, $context))) {
+        return false;
+    }
+
     if ($forum->type == 'single') {
         return false;
     }
@@ -5014,6 +5072,13 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
     }
 
     if (!has_capability($capname, $context, $user->id)) {
+        return false;
+    }
+
+    // STRY0010206 mart0969 20140416 - If a cutoff date is set and we are past the cutoff and the user is not allowed to post
+    // past the cutoff date, don't allow him to post.
+    // STRY0010467 mart0969 20140807 - Change to use cutoffdate subplugin
+    if (component_callback("forumsettings_cutoffdate", 'check_date', array($forum->id, $context))) {
         return false;
     }
 
@@ -5341,6 +5406,9 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
         $forum->type != 'qanda' and !has_capability('mod/forum:startdiscussion', $context)) {
         // no button and no info
 
+    } else if (component_callback("forumsettings_cutoffdate", 'check_date', array($forum->id, $context))) {
+        // STRY0010206 mart0969 20140416  - We are past the cutoff date. No button and no info.
+        // STRY0010467 mart0969 20140807 - Change to use cutoffdate subplugin
     } else if ($groupmode and !has_capability('moodle/site:accessallgroups', $context)) {
         // inform users why they can not post new discussion
         if (!$currentgroup) {

@@ -86,6 +86,14 @@
         print_error('missingparameter');
     }
 
+     // STRY0010467 mart0969 20140807 - Add subplugin data to $forum
+     foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+         $subplugin_data = component_callback("forumsettings_$pluginname", 'get_data', array($forum->id));
+         foreach ($subplugin_data as $key => $value) {
+             $forum->$key = $value;
+         }
+     }
+
     if (!$PAGE->button) {
         $PAGE->set_button(forum_search_form($course, $search));
     }
@@ -141,6 +149,12 @@
 
     $SESSION->fromdiscussion = qualified_me();   // Return here if we post or set subscription etc
 
+/// STRY0010206 mart0969 20140421 - Add cutoff date string if it a) is enabled, b) the user cannot post
+/// after the cutoff, and c) it is past the cutoff date
+/// STRY0010467 mart0969 20140807 - Change to use cutoffdate subplugin
+    foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+        component_callback("forumsettings_$pluginname", 'display_notification', array($context, $forum));
+    }
 
 /// Print settings and things across the top
 

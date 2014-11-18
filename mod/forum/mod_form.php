@@ -54,6 +54,13 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addHelpButton('type', 'forumtype', 'forum');
         $mform->setDefault('type', 'general');
 
+        // STRY0010206 mart0969 20140416 - Add checkbox and date setting to track cutoff date
+        // in forums.
+        // STRY0010467 mart0969 20140807 - Change to use cutoffdate subplugin
+        foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+            component_callback("forumsettings_$pluginname", 'add_element', array($mform));
+        }
+
         // Attachments and word count.
         $mform->addElement('header', 'attachmentswordcounthdr', get_string('attachmentswordcount', 'forum'));
 
@@ -225,6 +232,14 @@ class mod_forum_mod_form extends moodleform_mod {
             !empty($default_values['completionposts']) ? 1 : 0;
         if (empty($default_values['completionposts'])) {
             $default_values['completionposts']=1;
+        }
+
+        //STRY0010467 mart0969 20140807 - Get forum cutoffdate data, which isn't part of standard data
+        foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+            $subplugin_data = component_callback("forumsettings_$pluginname", 'get_data', array($default_values['id']));
+            foreach ($subplugin_data as $key => $value) {
+                $default_values[$key] = $value;
+            }
         }
     }
 
