@@ -51,6 +51,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         $output = '';
         $output .= $this->header();
+        $output .= $this->preview_attempt($attemptobj);
         $output .= $this->review_summary_table($summarydata, $page);
         $output .= $this->review_form($page, $showall, $displayoptions,
                 $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions),
@@ -419,6 +420,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $nextpage) {
         $output = '';
         $output .= $this->header();
+        $output .= $this->preview_attempt($attemptobj);
         $output .= $this->quiz_notices($messages);
         $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage);
         $output .= $this->footer();
@@ -437,7 +439,22 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $this->box($this->heading(get_string('accessnoticesheader', 'quiz'), 3) .
                 $this->access_messages($messages), 'quizaccessnotices');
     }
-
+    /**
+     * Will display notice if in preview mode and context sensitive help
+     *
+     * @param quiz_attempt $attemptobj Instance of quiz_attempt
+     * 
+     * 20140716 Ben Tindell STRY0010426
+     */
+    public function preview_attempt($attemptobj) {
+        //If it's not a preview then return nothing
+        global $OUTPUT;
+        if (!$attemptobj->is_preview()) {
+            return '';
+        }
+        //else return string and context sensitive help
+        return $this->box($this->heading(get_string('previewattempt','quiz') . $OUTPUT->help_icon('previewattempt', 'quiz')), 3);
+    }
     /**
      * Ouputs the form for making an attempt
      *
@@ -573,6 +590,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function summary_page($attemptobj, $displayoptions) {
         $output = '';
         $output .= $this->header();
+        $output .= $this->preview_attempt($attemptobj);
         $output .= $this->heading(format_string($attemptobj->get_quiz_name()));
         $output .= $this->heading(get_string('summaryofattempt', 'quiz'), 3);
         $output .= $this->summary_table($attemptobj, $displayoptions);

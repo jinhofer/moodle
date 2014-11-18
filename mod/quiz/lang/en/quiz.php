@@ -935,4 +935,9 @@ $string['helper_je_invalid_grade'] = 'Invalid grade value: ';
 
 // 20130204 hoang027 >>> add "internet ID" column to quiz report
 $string['internetid'] = 'Internet ID';
-// <<< 20130204 hoang027
+    // <<< 20130204 hoang027
+    
+/* Ben T added preview attempt STRY0010426*/
+$string['previewattempt'] = 'Preview Mode';
+$string['previewattempt_help'] = 'You are currently viewing this quiz in preview mode. <br/> Your attempt <strong> WILL NOT </strong> be saved.';
+    
