@@ -1169,7 +1169,9 @@ class restore_scales_structure_step extends restore_structure_step {
             // If global scale (course=0), check the user has perms to create it
             // falling to course scale if not
             $systemctx = context_system::instance();
-            if ($data->courseid == 0 && !has_capability('moodle/course:managescales', $systemctx , $this->task->get_userid())) {
+
+            # STRY0010468 20140805 Colin. Removed condition that caused some users to restore scales as global.
+            if ($data->courseid == 0) {
                 $data->courseid = $this->get_courseid();
             }
             // scale doesn't exist, create
