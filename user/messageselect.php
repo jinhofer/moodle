@@ -64,6 +64,10 @@ if (!$course = $DB->get_record('course', array('id' => $id))) {
 
 require_login($course);
 
+// 20131016 hoang027 >>> disable messaging
+print_error(get_string('disabled', 'message'));
+// <<< 20131016 hoang027
+
 $coursecontext = context_course::instance($id);   // Course context.
 $systemcontext = context_system::instance();   // SYSTEM context.
 require_capability('moodle/course:bulkmessaging', $coursecontext);
