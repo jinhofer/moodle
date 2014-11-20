@@ -69,15 +69,28 @@ class block_edit_form extends moodleform {
         // If the current weight of the block is out-of-range, add that option in.
         $blockweight = $this->block->instance->weight;
         $weightoptions = array();
-        if ($blockweight < -block_manager::MAX_WEIGHT) {
+
+        // 20131227 UMN >>> extend the weight range 10 more values for admin
+        $parentcontext = context::instance_by_id($this->block->instance->parentcontextid);
+
+        $max_weight = block_manager::MAX_WEIGHT;
+        if (has_capability('moodle/site:config', $parentcontext)) {
+            $max_weight += 10;
+        }
+
+        if ($blockweight < - $max_weight) {
             $weightoptions[$blockweight] = $blockweight;
         }
-        for ($i = -block_manager::MAX_WEIGHT; $i <= block_manager::MAX_WEIGHT; $i++) {
+
+        for ($i = - $max_weight; $i <= $max_weight; $i++) {
             $weightoptions[$i] = $i;
         }
-        if ($blockweight > block_manager::MAX_WEIGHT) {
+
+        if ($blockweight > $max_weight) {
             $weightoptions[$blockweight] = $blockweight;
         }
+        // <<< 20131227 UMN
+
         $first = reset($weightoptions);
         $weightoptions[$first] = get_string('bracketfirst', 'block', $first);
         $last = end($weightoptions);
@@ -85,7 +98,6 @@ class block_edit_form extends moodleform {
 
         $regionoptions = $this->page->theme->get_all_block_regions();
 
-        $parentcontext = context::instance_by_id($this->block->instance->parentcontextid);
         $mform->addElement('hidden', 'bui_parentcontextid', $parentcontext->id);
         $mform->setType('bui_parentcontextid', PARAM_INT);
 
