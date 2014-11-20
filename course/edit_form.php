@@ -291,8 +291,12 @@ class course_edit_form extends moodleform {
             $roles = role_fix_names($roles, null, ROLENAME_ORIGINAL);
             $assignableroles = get_roles_for_contextlevels(CONTEXT_COURSE);
             foreach ($roles as $role) {
-                $mform->addElement('text', 'role_'.$role->id, get_string('yourwordforx', '', $role->localname));
-                $mform->setType('role_'.$role->id, PARAM_TEXT);
+                // SDLC-84396 20110705 hoang027 >>> disable non-assignable roles
+                if (in_array($role->id, $assignableroles)) {
+                    $mform->addElement('text', 'role_'.$role->id, get_string('yourwordforx', '', $role->localname));
+                    $mform->setType('role_'.$role->id, PARAM_TEXT);
+                }
+                // <<< SDLC-84396
             }
         }
 
