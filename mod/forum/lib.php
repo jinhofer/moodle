@@ -589,14 +589,14 @@ function forum_cron() {
                 }
             }
 
+            // Save the Inbound Message datakey here to reduce DB queries later.
+            $messageinboundgenerator->set_data($pid);
+            $messageinboundhandlers[$pid] = $messageinboundgenerator->fetch_data_key();
+
             // Caching subscribed users of each forum.
             if (!isset($subscribedusers[$forumid])) {
                 $modcontext = context_module::instance($coursemodules[$forumid]->id);
                 if ($subusers = \mod_forum\subscriptions::fetch_subscribed_users($forums[$forumid], 0, $modcontext, 'u.*', true)) {
-
-                    // Save the Inbound Message datakey here to reduce DB queries later.
-                    $messageinboundgenerator->set_data($pid);
-                    $messageinboundhandlers[$pid] = $messageinboundgenerator->fetch_data_key();
 
                     foreach ($subusers as $postuser) {
                         // this user is subscribed to this forum
@@ -3726,7 +3726,7 @@ function forum_rating_validate($params) {
 function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="",
                                         $cantrack=true, $forumtracked=true, $canviewparticipants=true, $modcontext=NULL) {
 
-    global $USER, $CFG, $OUTPUT;
+    global $COURSE, $USER, $CFG, $OUTPUT;
 
     static $rowcount;
     static $strmarkalldread;
@@ -3774,9 +3774,14 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     if ($group !== -1) {  // Groups are active - group is a group data object or NULL
         echo '<td class="picture group">';
         if (!empty($group->picture) and empty($group->hidepicture)) {
-            print_group_picture($group, $forum->course, false, false, true);
+            if ($canviewparticipants && $COURSE->groupmode) {
+                $picturelink = true;
+            } else {
+                $picturelink = false;
+            }
+            print_group_picture($group, $forum->course, false, false, $picturelink);
         } else if (isset($group->id)) {
-            if($canviewparticipants) {
+            if ($canviewparticipants && $COURSE->groupmode) {
                 echo '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
             } else {
                 echo $group->name;
