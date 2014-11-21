@@ -93,6 +93,25 @@
 .block_course_overview .activity_overview img.iconlarge { vertical-align: text-bottom; margin-right: 6px; }
 .dir-rtl .block_course_overview .activity_overview img.iconlarge { margin-left: 6px; margin-right: 0;}
 
+.block_course_overview .collapsibleregion .collapsibleregioncaption > a {
+    background-image: url([[pix:core|t/expanded]]);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    padding-left: 21px;
+}
+
+.jsenabled .block_course_overview .collapsibleregion {
+    cursor: pointer;
+}
+
+.jsenabled .block_course_overview .collapsibleregion.collapsed .collapsibleregioncaption > a {
+    background-image: url([[pix:core|t/collapsed]]);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    padding-left: 21px;
+    cursor: pointer;
+}
+
 .block_course_overview .singleselect {
     text-align: left;
     margin: 0;
