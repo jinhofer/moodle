@@ -132,12 +132,14 @@ class course_edit_form extends moodleform {
         $mform->addElement('header', 'descriptionhdr', get_string('description'));
         $mform->setExpanded('descriptionhdr');
 
-        $mform->addElement('editor','summary_editor', get_string('coursesummary'), null, $editoroptions);
-        $mform->addHelpButton('summary_editor', 'coursesummary');
-        $mform->setType('summary_editor', PARAM_RAW);
-        $summaryfields = 'summary_editor';
+        // UMN: turn off rich-text editing for course_summary
+        $mform->addElement('textarea','summary', get_string('coursesummary'), array('rows' => 10, 'cols' => 60));
+        $mform->addHelpButton('summary', 'coursesummary');
+        $mform->setType('summary', PARAM_RAW);
+        $summaryfields = 'summary';
 
-        if ($overviewfilesoptions = course_overviewfiles_options($course)) {
+        // UMN: turn off uploading summary file
+        if (false && $overviewfilesoptions = course_overviewfiles_options($course)) {
             $mform->addElement('filemanager', 'overviewfiles_filemanager', get_string('courseoverviewfiles'), null, $overviewfilesoptions);
             $mform->addHelpButton('overviewfiles_filemanager', 'courseoverviewfiles');
             $summaryfields .= ',overviewfiles_filemanager';

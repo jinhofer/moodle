@@ -97,6 +97,9 @@ if (!empty($course)) {
     }
 }
 
+// UMN: turn off rich-text for course summary
+$editoroptions = null;
+
 // First create the form.
 $editform = new course_edit_form(NULL, array('course'=>$course, 'category'=>$category, 'editoroptions'=>$editoroptions, 'returnto'=>$returnto));
 if ($editform->is_cancelled()) {
@@ -124,6 +127,9 @@ if ($editform->is_cancelled()) {
         redirect($url);
 
 } else if ($data = $editform->get_data()) {
+    // UMN: turn off rich-text format for summary
+    $data->summaryformat = FORMAT_PLAIN;
+
     // Process data if submitted.
     if (empty($course->id)) {
         // In creating the course.
