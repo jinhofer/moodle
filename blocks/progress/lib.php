@@ -935,6 +935,7 @@ function block_progress_bar($modules, $config, $events, $userid, $instance, $att
             'id' => '',
             'width' => $width.'%',
             'onmouseover' => 'M.block_progress.showInfo('.$instance.','.$userid.','.$event['cm']->id.');',
+            'onmouseout' => 'M.block_progress.showDefault('.$instance.','.$userid.','.$event['cm']->id.');',
              'style' => 'background-color:');
         if ($attempted === true) {
             $celloptions['style'] .= get_config('block_progress', 'attempted_colour').';';
@@ -942,7 +943,7 @@ function block_progress_bar($modules, $config, $events, $userid, $instance, $att
                                isset($config->progressBarIcons) && $config->progressBarIcons == 1 ?
                                'tick' : 'blank', '', 'block_progress');
         }
-        else if (((!isset($config->orderby) || $config->orderby == 'orderbytime') && $event['expected'] < $now) ||
+        else if (((!isset($config->orderby) || $config->orderby == 'orderbytime' || $config->orderby == 'orderbycourse') && $event['expected'] < $now) ||
                  ($attempted === 'failed')) {
             $celloptions['style'] .= get_config('block_progress', 'notattempted_colour').';';
             $cellcontent = $OUTPUT->pix_icon(

@@ -14,5 +14,12 @@ M.block_progress = {
         document.getElementById('progressBarInfo' + instance + '-' + user + '-' + last).style.display = 'none';
         document.getElementById('progressBarInfo' + instance + '-' + user + '-' + id).style.display = 'block';
         this.progressBarLast[instance + '-' + user] = id;
+    },
+
+    showDefault: function (instance, user, id) {
+        var last = this.progressBarLast[instance + '-' + user];
+        document.getElementById('progressBarInfo' + instance + '-' + user + '-' + id).style.display = 'none';
+        document.getElementById('progressBarInfo' + instance + '-' + user + '-info').style.display = 'block';
+        this.progressBarLast[instance + '-' + user] = 'info';
     }
 };
