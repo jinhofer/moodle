@@ -67,6 +67,9 @@ class mod_wiki_edit_form extends moodleform {
         //editor
         $mform->addElement('header', 'general', $pagetitle);
 
+        //STRY0010325 mart0969 20140602 - Add language string for note on formatting header.
+        $mform->addElement('html', '<div><p>'.get_string('headingformat','wiki').'</p></div>');
+
         $fieldname = get_string('format' . $format, 'wiki');
         if ($format != 'html') {
             // Use wiki editor

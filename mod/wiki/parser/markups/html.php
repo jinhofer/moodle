@@ -55,8 +55,11 @@ class html_parser extends nwiki_parser {
         }
 
         $h1 = array("<\s*h1\s*>", "<\/h1>");
+        //STRY0010325 mart0969 20140602 - Add extra pattern
+        //so regex respects extra tags inside h1 tag
+        $extratags = '(?:<[^<>]*>)*';
 
-        $regex = "/(.*?)({$h1[0]}\s*".preg_quote($header, '/')."\s*{$h1[1]}.*?)((?:\n{$h1[0]}.*)|$)/is";
+        $regex = "/(.*?)({$h1[0]}\s*$extratags".preg_quote($header, '/')."$extratags\s*{$h1[1]}.*?)((?:\n{$h1[0]}.*)|$)/is";
         preg_match($regex, $text, $match);
 
         if (!empty($match)) {

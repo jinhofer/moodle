@@ -270,3 +270,5 @@ $string['wikipages'] = 'Wiki pages';
 $string['wrongversionlock'] = 'Another user has edited this page while you were editing and your content is obsolete.';
 $string['wrongversionsave'] = 'Another user has created a version while you were editing and you have overwritten his changes, check the page history.';
 
+//STRY0010325 mart0969 20140604 - Add language string for heading format note in edit screen
+$string['headingformat'] = 'If your Wiki includes formatted headings, formatting must be applied to the entire heading.';
