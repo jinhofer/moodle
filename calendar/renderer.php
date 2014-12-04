@@ -42,7 +42,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @param string $authtoken
      * @return string
      */
-    public function basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $userid, $authtoken) {
+    public function basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $userid, $authtoken, $customfirstday, $customlastday) {
         global $CFG;
 
         $output  = html_writer::tag('div', get_string('export', 'calendar'), array('class'=>'header'));
@@ -87,15 +87,73 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('br');
 
         if ($CFG->calendar_customexport) {
-            $a = new stdClass();
             $now = time();
-            $time = $now - $CFG->calendar_exportlookback * DAYSECS;
-            $a->timestart = userdate($time, get_string('strftimedatefullshort', 'langconfig'));
-            $time = $now + $CFG->calendar_exportlookahead * DAYSECS;
-            $a->timeend = userdate($time, get_string('strftimedatefullshort', 'langconfig'));
+
+            # STRY0010331 20140717 Colin. Using jQuery datepicker for export range.
+            // These date strings must be consistent with the datepicker ISO_8601 format.
+            $customfirstday = $customfirstday ?: date("Y-m-d", $now - $CFG->calendar_exportlookback * DAYSECS);
+            $customlastday  = $customlastday  ?: date("Y-m-d", $now + $CFG->calendar_exportlookahead * DAYSECS);
+
             $output .= html_writer::empty_tag('input', array('type' => 'radio', 'name' => 'preset_time', 'id' => 'pt_custom', 'value' => 'custom'));
-            $output .= html_writer::tag('label', get_string('customexport', 'calendar', $a), array('for' => 'pt_custom'));
+            $output .= html_writer::tag('label', get_string('customrange', 'calendar'), array('for' => 'pt_custom'));
+            $output .= '&nbsp;';
+            $output .= html_writer::empty_tag('input', array('type' => 'text', 'name' => 'firstday', 'id' => 'exportfirstday', 'size' => 10, 'value' => $customfirstday));
+            $output .= ' - ';
+            $output .= html_writer::empty_tag('input', array('type' => 'text', 'name' => 'lastday', 'id' => 'exportlastday', 'size' => 10, 'value' => $customlastday));
             $output .= html_writer::empty_tag('br');
+
+            // Make an div for Javascript to place an error message.
+            global $OUTPUT;
+            $output .= html_writer::start_tag('div', array('style' => 'display: none;', 'class' => 'customrangeerrorcontainer'));
+            $output .= $OUTPUT->notification(html_writer::tag('span',
+                                                              'Custom range format: yyyy-mm-dd',
+                                                              array('class' => 'customrangeerrormessage')),
+                                             'notifyproblem');
+            $output .= html_writer::end_tag('div');
+
+            $customrangeerror = get_string('customrangeerror', 'calendar');
+
+            $datepickerjs =<<<JS
+$( document ).ready(function() {
+    $( "#exportfirstday, #exportlastday" ).datepicker({
+        dateFormat: $.datepicker.ISO_8601,
+        onSelect: function() {
+                    $("#pt_custom").prop("checked", true);
+                  }
+    });
+
+    $("#exportfirstday, #exportlastday").click(function(){ $("#pt_custom").prop("checked", true); });
+
+    $(".maincalendar form").submit(function( event ) {
+        var dateformat, firstday, lastday;
+        var dateerror = false;
+
+        $(".customrangeerrorcontainer").hide();
+        if ( $("#pt_custom").prop("checked") === true) {
+            dateformat = $("#exportfirstday").datepicker("option", "dateFormat");
+            dateerror = false;
+            try {
+                firstday = $.datepicker.parseDate(dateformat, $("#exportfirstday").val());
+                lastday  = $.datepicker.parseDate(dateformat, $("#exportlastday" ).val());
+
+                if (null == firstday || null == lastday || firstday > lastday) {
+                    dateerror = true;
+                }
+            } catch (e) {
+                dateerror = true;
+            }
+            if (dateerror) {
+                $(".customrangeerrormessage").text('$customrangeerror');
+                $(".customrangeerrorcontainer").fadeIn();
+                event.preventDefault();
+            }
+        }
+    });
+});
+JS;
+
+            $output .= html_writer::script($datepickerjs);
+            # End of export range datepicker.
         }
 
         $output .= html_writer::end_tag('div');

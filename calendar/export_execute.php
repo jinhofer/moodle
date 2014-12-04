@@ -37,6 +37,12 @@ $calendartype = \core_calendar\type_factory::get_calendar_instance();
 $what = optional_param('preset_what', 'all', PARAM_ALPHA);
 $time = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
 
+# STRY0010331 20140721 Colin. Added firstday, lastday for calendar export custom range enhancement.
+if ($time == 'custom') {
+    $firstday = required_param('firstday', PARAM_ALPHANUMEXT);
+    $lastday  = required_param('lastday' , PARAM_ALPHANUMEXT);
+}
+
 $now = $calendartype->timestamp_to_date_array(time());
 
 // Let's see if we have sufficient and correct data
@@ -48,6 +54,13 @@ if (!empty($generateurl)) {
     $params = array();
     $params['preset_what'] = $what;
     $params['preset_time'] = $time;
+
+    # STRY0010331 20140721 Colin. Added firstday, lastday for calendar export custom range enhancement
+    if ($params['preset_time'] == "custom") {
+        $params['firstday'] = $firstday;
+        $params['lastday'] = $lastday;
+    }
+
     $params['userid'] = $userid;
     $params['authtoken'] = $authtoken;
     $params['generateurl'] = true;
@@ -156,9 +169,13 @@ if(!empty($what) && !empty($time)) {
                 $timeend = time() + 5184000;
             break;
             case 'custom':
+                # STRY0010331 20140721 Colin. Added firstday, lastday for calendar export custom range enhancement.
                 // Events based on custom date range.
-                $timestart = time() - $CFG->calendar_exportlookback * DAYSECS;
-                $timeend = time() + $CFG->calendar_exportlookahead * DAYSECS;
+                $timestart = DateTime::createFromFormat('Y-m-d H:i:s', $firstday.' 00:00:00');
+                $timeend   = DateTime::createFromFormat('Y-m-d H:i:s', $lastday .' 23:59:59');
+                // If unable to create a DateTime object from string use the configured start and/or end.
+                $timestart = $timestart ? $timestart->getTimestamp() : time() - $CFG->calendar_exportlookback * DAYSECS;
+                $timeend   = $timeend   ? $timeend->getTimestamp()   : time() + $CFG->calendar_exportlookahead * DAYSECS;
             break;
         }
     }

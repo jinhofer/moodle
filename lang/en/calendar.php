@@ -45,6 +45,11 @@ $string['courseevent'] = 'Course event';
 $string['courseevents'] = 'Course events';
 $string['courses'] = 'Courses';
 $string['customexport'] = 'Custom range ({$a->timestart} - {$a->timeend})';
+
+# STRY0010331 20140717 Colin. To go with datepicker.
+$string['customrange'] = 'Custom range';
+$string['customrangeerror'] = 'Range error: Custom range requires that the dates be in "yyyy-mm-dd" format, and the first date must not be greater than the second date.';
+
 $string['daily'] = 'Daily';
 $string['dayviewfor'] = 'Day view for:';
 $string['dayviewtitle'] = 'Day view: {$a}';

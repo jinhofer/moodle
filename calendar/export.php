@@ -119,6 +119,11 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_button(calendar_preferences_button($course));
 
+# STRY0010331 20140721 Colin. Using jquery for calendar export custom range enhancement.
+$PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin('ui');
+$PAGE->requires->jquery_plugin('ui-css');
+
 $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer);
 
@@ -146,7 +151,13 @@ switch($action) {
         $allownextmonth = calendar_days_in_month($now['mon'], $now['year']) - $now['mday'] < $numberofdaysinweek;
         // If today it's weekend but tomorrow it isn't, do NOT give the "this week" option.
         $allowthisweek = !(($weekend & (1 << $now['wday'])) && !($weekend & (1 << (($now['wday'] + 1) % $numberofdaysinweek))));
-        echo $renderer->basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $USER->id, $authtoken);
+
+        # STRY0010331 20140721 Colin. Added firstday, lastday for calendar export custom range enhancement.
+        $customfirstday = optional_param('firstday', null, PARAM_ALPHANUMEXT);
+        $customlastday  = optional_param('lastday' , null, PARAM_ALPHANUMEXT);
+
+        echo $renderer->basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $USER->id, $authtoken,
+                                          $customfirstday, $customlastday);
         break;
 }
 
@@ -155,6 +166,12 @@ if (!empty($generateurl)) {
     $params['authtoken']   = optional_param('authtoken', '', PARAM_ALPHANUM);
     $params['preset_what'] = optional_param('preset_what', 'all', PARAM_ALPHA);
     $params['preset_time'] = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
+
+    # STRY0010331 20140721 Colin. Added firstday, lastday for calendar export custom range enhancement.
+    if ($params['preset_time'] == 'custom') {
+        $params['firstday'] = required_param('firstday', PARAM_ALPHANUMEXT);
+        $params['lastday']  = required_param('lastday' , PARAM_ALPHANUMEXT);
+    }
 
     $link = new moodle_url('/calendar/export_execute.php', $params);
     print html_writer::tag('div', get_string('calendarurl', 'calendar', $link->out()), array('class' => 'generalbox calendarurl'));
