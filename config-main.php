@@ -641,6 +641,21 @@ $CFG->ppsft_dbname = 'dwprd.oit';
 // For migrating courses from one instance to another.
 $CFG->migration_base_dir = '/nfs/migration/transfer';
 
+// Relative to dataroot. This is where the migration logic puts response files
+// that it receives from source instances.
+$CFG->migration_repository_dir = 'repository/migrations';
+
+// The campuses array is primarily used in local/courses for mapping
+// requests to course categories.
+$CFG->campuses = array('UMNTC' => 'Twin Cities',
+                       'UMNDL' => 'Duluth',
+                       'UMNMO' => 'Morris',
+                       'UMNCR' => 'Crookston',
+                       'UMNRO' => 'Rochester');
+
+// Disable partial range requests
+$CFG->disablebyteserving = true;
+
 //=========================================================================
 // 9. PHPUNIT SUPPORT
 //=========================================================================
