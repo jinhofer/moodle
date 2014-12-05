@@ -3160,7 +3160,8 @@ class assign {
         // Get markers to use in drop lists.
         $markingallocationoptions = array();
         if ($markingallocation) {
-            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            # STRY0010246 Colin 20140327. Only include enrolled graders; no support users.
+            $markers = get_enrolled_users($this->context, "mod/assign:grade");
             $markingallocationoptions[''] = get_string('filternone', 'assign');
             $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
             foreach ($markers as $marker) {
@@ -3699,7 +3700,8 @@ class assign {
             'usershtml' => $usershtml,
         );
 
-        $markers = get_users_by_capability($this->get_context(), 'mod/assign:grade');
+        # STRY0010246 Colin 20140327. Only include enrolled graders; no support users.
+        $markers = get_enrolled_users($this->context, "mod/assign:grade");
         $markerlist = array();
         foreach ($markers as $marker) {
             $markerlist[$marker->id] = fullname($marker);
@@ -5438,7 +5440,8 @@ class assign {
         if ($markingallocation) {
             $markingallocationoptions[''] = get_string('filternone', 'assign');
             $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
-            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            # STRY0010246 Colin 20140327. Only include enrolled graders; no support users.
+            $markers = get_enrolled_users($this->context, "mod/assign:grade");
             foreach ($markers as $marker) {
                 $markingallocationoptions[$marker->id] = fullname($marker);
             }
@@ -6015,7 +6018,8 @@ class assign {
             $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context)) {
 
-            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            # STRY0010246 Colin 20140327. Only include enrolled graders; no support users.
+            $markers = get_enrolled_users($this->context, "mod/assign:grade");
             $markerlist = array('' =>  get_string('choosemarker', 'assign'));
             foreach ($markers as $marker) {
                 $markerlist[$marker->id] = fullname($marker);
