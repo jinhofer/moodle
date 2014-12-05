@@ -179,4 +179,37 @@ What would happen if a non-terminated string were input to this function?
 
         $this->assertSame($strconv, html_to_text($strorig));
     }
+
+    # STRY0010345 20140530 Colin. Added blockquote testing.
+    /**
+     * BLOCKQUOTE parsing
+     */
+    public function test_single_blockquote() {
+
+        $text = '<div><blockquote>1z2z3z4z5z6z7z8z</blockquote></div>';
+
+        $result = html_to_text($text, 0, false);
+        $this->assertEquals("> 1z2z3z4z5z6z7z8z\n", $result);
+    }
+
+    public function test_nested_blockquotes() {
+
+        $text = '<div><blockquote>1z2z3z4z5z6z7z8z9z0z<blockquote>1x2x3x4x5<blockquote>Φa√bΦc√dΦe√fΦg√hΦi√jΦk√</blockquote>x6x7x8x9x0x</blockquote>1c2c3c4c5c6c7c8c9c0c</blockquote></div>';
+        $result = html_to_text($text, 0, false);
+        $this->assertEquals("> 1z2z3z4z5z6z7z8z9z0z\n> \n>> 1x2x3x4x5\n>> \n>>> Φa√bΦc√dΦe√fΦg√hΦi√jΦk√\n>> x6x7x8x9x0x\n> 1c2c3c4c5c6c7c8c9c0c\n", $result);
+    }
+
+    public function test_multiple_blockquotes() {
+
+        $text = '<div><blockquote>1z2z3z4z5z6z7z8z9z0z</blockquote><blockquote>Φa√bΦc√dΦe√fΦg√hΦi√jΦk√</blockquote><blockquote>1x2x3x4x5x6x7x8x9x0x</blockquote>W<blockquote>1c2c3c4c5c6c7c8c9c0c</blockquote><blockquote>1v2v3v4v5v6v7v8v9v0v</blockquote></div>';
+        $result = html_to_text($text, 0, false);
+        $this->assertEquals("> 1z2z3z4z5z6z7z8z9z0z\n\n> Φa√bΦc√dΦe√fΦg√hΦi√jΦk√\n\n> 1x2x3x4x5x6x7x8x9x0x\nW\n\n> 1c2c3c4c5c6c7c8c9c0c\n\n> 1v2v3v4v5v6v7v8v9v0v\n", $result);
+    }
+
+    public function test_multiple_nested_blockquotes() {
+        $text = "a<blockquote>b<blockquote>c</blockquote><blockquote>d<blockquote>e</blockquote</blockquote></blockquote></blockquote>f";
+        $result = html_to_text($text, 20, false);
+        $this->assertEquals("a\n\n> b\n> \n>> c\n> \n>> d\n>> \n>>> e\nf", $result);
+    }
+
 }

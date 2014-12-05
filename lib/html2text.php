@@ -621,50 +621,58 @@ class html2text
      */
     function _convert_blockquotes(&$text)
     {
-        if (preg_match_all('/<\/*blockquote[^>]*>/i', $text, $matches, PREG_OFFSET_CAPTURE)) {
-            $level = 0;
-            $diff = 0;
-            foreach ($matches[0] as $m) {
-                if ($m[0][0] == '<' && $m[0][1] == '/') {
-                    $level--;
-                    if ($level < 0) {
-                        $level = 0; // malformed HTML: go to next blockquote
-                    }
-                    else if ($level > 0) {
-                        // skip inner blockquote
-                    }
-                    else {
-                        $end  = $m[1];
-                        $len  = $end - $taglen - $start;
-                        // Get blockquote content
-                        $body = substr($text, $start + $taglen - $diff, $len);
+        # STRY0010345 20140530 Colin. Implementation changes to fix problem with multiple
+        #             blockquotes.  Also, reported as MDL-45520.
+        $level = 0;
+        $searchoffset = 0;
+        while (preg_match('/<\/*blockquote[^>]*>/i', $text, $matches, PREG_OFFSET_CAPTURE, $searchoffset)) {
+            $m = $matches[0];
 
-                        // Set text width
-                        $p_width = $this->width;
-                        if ($this->width > 0) $this->width -= 2;
-                        // Convert blockquote content
-                        $body = trim($body);
-                        $this->_converter($body);
-                        // Add citation markers and create PRE block
-                        $body = preg_replace('/((^|\n)>*)/', '\\1> ', trim($body));
-                        $body = '<pre>' . htmlspecialchars($body) . '</pre>';
-                        // Re-set text width
-                        $this->width = $p_width;
-                        // Replace content
-                        $text = substr($text, 0, $start - $diff)
-                            . $body . substr($text, $end + strlen($m[0]) - $diff);
+            // Advance start of search for next time around.
+            $searchoffset = $m[1] + strlen($m[0]);
 
-                        $diff = $len + $taglen + strlen($m[0]) - strlen($body);
-                        unset($body);
-                    }
+            if ($m[0][0] == '<' && $m[0][1] == '/') {
+                $level--;
+                if ($level < 0) {
+                    $level = 0; // malformed HTML: go to next blockquote
+                }
+                else if ($level > 0) {
+                    // skip inner blockquote
                 }
                 else {
-                    if ($level == 0) {
-                        $start = $m[1];
-                        $taglen = strlen($m[0]);
-                    }
-                    $level ++;
+                    $end  = $m[1];
+                    $len  = $end - $taglen - $start;
+                    // Get blockquote content
+                    $body = substr($text, $start + $taglen, $len);
+
+                    // Set text width. Reduce width for quoted content by 2 to account for line prefix.
+                    $p_width = $this->width;
+                    if ($this->width > 0) $this->width -= 2;
+                    // Convert blockquote content
+                    $body = trim($body);
+                    $this->_converter($body);
+                    // Add citation markers and create PRE block
+                    $body = preg_replace('/((^|\n)>*)/', '\\1> ', trim($body));
+                    $body = '<pre>' . htmlspecialchars($body) . '</pre>';
+                    // Re-set text width to value it had on this function entry.
+                    $this->width = $p_width;
+
+                    // Replace content
+                    $text = substr($text, 0, $start)
+                        . $body . substr($text, $end + strlen($m[0]));
+
+                    // Update search offset for next time around to account for $text change.
+                    $searchoffset = $start + strlen($body);
+
+                    unset($body);
                 }
+            }
+            else {
+                if ($level == 0) {
+                    $start = $m[1];
+                    $taglen = strlen($m[0]);
+                }
+                $level ++;
             }
         }
     }
