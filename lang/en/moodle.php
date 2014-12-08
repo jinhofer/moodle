@@ -2030,3 +2030,5 @@ $string['zippingbackup'] = 'Zipping backup';
 $string['ppsftsection'] = 'PeopleSoft';
 // <<< SDLC-84396
 
+//MOOD-239 btindell 10/28/14 - Added language string for "Text Editor" context sensitive help
+$string['textediting_help'] = 'Use this option to select the editor that you would like to use when entering text. This will include, but is not limited to, areas such as labels, descriptions, and summaries. If you select "Plain text area", all text entry areas with allow you to use HTML format, Moodle auto-format, Plain text format, or Markdown format. For a description of Markdown format, see <a href="https://docs.moodle.org/28/en/Markdown"> Moodle Markdown</a>.';

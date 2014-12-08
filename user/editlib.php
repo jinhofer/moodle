@@ -352,7 +352,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
  * @param array|null $filemanageroptions
  */
 function useredit_shared_definition_preferences($user, &$mform, $editoroptions = null, $filemanageroptions = null) {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
     $choices = array();
     $choices['0'] = get_string('emaildisplayno');
@@ -411,7 +411,8 @@ function useredit_shared_definition_preferences($user, &$mform, $editoroptions =
             }
             $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
         }
-        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
+	//MOOD-539 - btindell 10/28/14 - Added Context sensitive help at "Text Editor" portion of edit settings
+        $mform->addElement('select', 'preference_htmleditor', get_string('textediting').$OUTPUT->help_icon('textediting'), $choices);
         $mform->setDefault('preference_htmleditor', '');
     } else {
         // Empty string means use the first chosen text editor.
