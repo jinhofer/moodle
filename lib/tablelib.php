@@ -1094,12 +1094,14 @@ class flexible_table {
             $this->print_nothing_to_display();
 
         } else {
-            // Print empty rows to fill the table to the current pagesize.
-            // This is done so the header aria-controls attributes do not point to
-            // non existant elements.
-            $emptyrow = array_fill(0, count($this->columns), '');
-            while ($this->currentrow < $this->pagesize) {
-                $this->print_row($emptyrow, 'emptyrow');
+            if ($this->use_pages) {
+                // Print empty rows to fill the table to the current pagesize.
+                // This is done so the header aria-controls attributes do not point to
+                // non existant elements.
+                $emptyrow = array_fill(0, count($this->columns), '');
+                while ($this->currentrow < $this->pagesize) {
+                    $this->print_row($emptyrow, 'emptyrow');
+                }
             }
 
             echo html_writer::end_tag('tbody');
