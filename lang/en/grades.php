@@ -793,3 +793,9 @@ $string['gradingbasis'] = 'Grading basis';
 $string['categoriesedit'] = 'Edit setup';
 $string['fullview'] = 'Full view';
 $string['simpleview'] = 'Simple view';
+
+//MOOD-253 btindell 20141105 - Added strings for gradebook import type
+$string['separator_help'] = 'If you are importing a .csv file, select “Comma”. If you are importing any other file, make sure that the data is separated by a tab, a comma, a colon, or a semicolon and select that option.';
+$string['rowpreviewnum_help'] = 'Sets the number of rows that are available during the preview step of the pasted data. The preview step allows the user to ensure that the data was interpreted correctly.';
+$string['verbosescales_help'] = 'Verbose scales is for importing grades that have non-numeric grading scales (Pass/Fail, Satisfactory, etc.). Having it on will not affect numeric scores. Turning this setting off will prevent any scores from being updated that do not have numeric values, even if the grading type is a non-numeric scale.';
+// <<< MOOD-253
