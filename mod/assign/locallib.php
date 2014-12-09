@@ -2238,6 +2238,8 @@ class assign {
      * @return string
      */
     protected function view_plugin_content($pluginsubtype) {
+        global $DB; //STRY0010215 mart0969 20140328 - Add $DB
+
         $o = '';
 
         $submissionid = optional_param('sid', 0, PARAM_INT);
@@ -2258,6 +2260,19 @@ class assign {
                                                               $this->show_intro(),
                                                               $this->get_course_module()->id,
                                                               $plugin->get_name()));
+
+            //STRY0010215 mart0969 20140328 - Add user information to submission screen
+            $user = $DB->get_record('user', array('id' => $item->userid));
+            $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
+            $o .= $this->get_renderer()->render(new assign_user_summary($user,
+                                                   $this->get_course()->id,
+                                                   $viewfullnames,
+                                                   $this->is_blind_marking(),
+                                                   $this->get_uniqueid_for_user($user->id),
+                                                   get_extra_user_fields($this->get_context()),
+                                                   !$this->is_active_user($user->id)));
+            // <<< STRY0010215
+
             $o .= $this->get_renderer()->render(new assign_submission_plugin_submission($plugin,
                                                               $item,
                                                               assign_submission_plugin_submission::FULL,
@@ -3243,6 +3258,13 @@ class assign {
             $o .= plagiarism_update_status($this->get_course(), $this->get_course_module());
         }
 
+        //STRY0010215 mart0969 20140328 - Move options form above grading table
+        $assignform = new assign_form('gradingoptionsform',
+                                      $gradingoptionsform,
+                                      'M.mod_assign.init_grading_options');
+        $o .= $this->get_renderer()->render($assignform);
+        //<<< End STRY0010215
+
         // Load and print the table of submissions.
         if ($showquickgrading && $quickgrading) {
             $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, true);
@@ -3267,10 +3289,6 @@ class assign {
             $assignform = new assign_form('gradingbatchoperationsform', $gradingbatchoperationsform);
             $o .= $this->get_renderer()->render($assignform);
         }
-        $assignform = new assign_form('gradingoptionsform',
-                                      $gradingoptionsform,
-                                      'M.mod_assign.init_grading_options');
-        $o .= $this->get_renderer()->render($assignform);
         return $o;
     }
 
