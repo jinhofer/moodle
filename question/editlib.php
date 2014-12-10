@@ -181,6 +181,36 @@ class_alias('core_question\bank\creator_name_column', 'question_bank_creator_nam
  */
 class_alias('core_question\bank\modifier_name_column', 'question_bank_modifier_name_column', true);
 
+/**
+ * STRY0010318 mart0969 20140528 - A column type for all of the quizzes in which a question is used.
+ *
+ * @copyright  2014 Jon Marthaler
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_bank_usedby_column extends question_bank_column_base {
+    public function get_name() {
+        return 'usedby';
+    }
+
+    protected function get_title() {
+        return get_string('usedby', 'question');
+    }
+
+    protected function display_content($question, $rowclasses) {
+        global $DB;
+        $instance = $DB->record_exists('quiz_slots', array('questionid' => $question->id));
+        $attempt = $DB->record_exists('question_attempts', array('questionid' => $question->id));
+        if ($instance || $attempt) {
+            global $OUTPUT;
+	    $link = $this->qbank->usedby_url($question);
+            $action = new popup_action('click', $link);
+
+            echo $OUTPUT->action_link($link, 'Yes', $action);
+        } else {
+            echo 'No';
+        }
+    }
+}
 
 /**
  * A base class for actions that are an icon that lets you manipulate the question in some way.

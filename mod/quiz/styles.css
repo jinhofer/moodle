@@ -524,6 +524,10 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .statusbar {
     margin: 0.6em 0.4em;
 }
+/*STRY0010318 mart0969 20140528 - Center column */
+#categoryquestions .usedby {
+    text-align: center;
+}
 #page-mod-quiz-edit .statusdisplay {
     background-color: #ffc;
     clear: both;

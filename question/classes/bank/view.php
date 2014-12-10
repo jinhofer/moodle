@@ -122,12 +122,13 @@ class view {
     protected function wanted_columns() {
         global $CFG;
 
+	////STRY0010318 Jon adding column
         if (empty($CFG->questionbankcolumns)) {
             $questionbankcolumns = array('checkbox_column', 'question_type_column',
                                      'question_name_column', 'edit_action_column', 'copy_action_column',
                                      'preview_action_column', 'delete_action_column',
                                      'creator_name_column',
-                                     'modifier_name_column');
+                                     'modifier_name_column', 'question_bank_usedby_column');
         } else {
              $questionbankcolumns = explode(',', $CFG->questionbankcolumns);
         }
@@ -436,6 +437,21 @@ class view {
      */
     public function get_most_specific_context() {
         return $this->contexts->lowest();
+    }
+
+    //STRY0010318 Jon adding capability checking
+    public function usedby_url($question) {
+        $params = array();
+        $params['id'] = $question->id;
+
+        $context = $this->contexts->lowest();
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            $params['cmid'] = $context->instanceid;
+        } else if ($context->contextlevel == CONTEXT_COURSE) {
+            $params['courseid'] = $context->instanceid;
+        }
+
+        return new \moodle_url('/question/question_used.php', $params);
     }
 
     /**

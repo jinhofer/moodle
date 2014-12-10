@@ -446,3 +446,7 @@ $string['yougotnright'] = 'You have correctly selected {$a->num}.';
 // Deprecated since Moodle 2.8.
 
 $string['hidden'] = 'Hidden';
+
+//STRY0010318 mart0969 20140528 - Add column to track quizzes that use a question
+$string['usedby'] = 'Used in a quiz?';
+$string['usedby_title'] = 'Question: {$a}';
