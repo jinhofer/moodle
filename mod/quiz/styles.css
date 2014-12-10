@@ -171,6 +171,14 @@ body.jsenabled .questionflagcheckbox {
     margin: 0.5em 0;
 }
 
+/* 20120622 Colin. Countdown timer customization for keeping timer in view.
+ * This must come before the timeleftN styles or else those background colors
+ * will not override the one set here.
+ * 20130110 Colin. Scoped the styling so that it does not affect the quiz summary page,
+ * where it was partially covering up a js confirmation dialog in some cases. (INC0301409)
+ */
+#page-mod-quiz-attempt #quiz-timer.stayonscreen {background:#ffffff; position:relative; border:red solid 1px; padding: 1px 3px; z-index:1000; top: 0px;}
+
 /* Countdown timer. */
 #quiz-timer {
     display: none;

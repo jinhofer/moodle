@@ -58,6 +58,15 @@ M.mod_quiz.timer = {
     // so we can cancel.
     timeoutid: null,
 
+    /* 20120626 Colin. Original container bottom padding. As we move the timer down,
+     * we need to ensure that the container is large enough to show the timer.
+     * Otherwise, the timer would not be visible because the container has
+     * overflow:hidden.  Also, we should reduce any extra padding when going
+     * up or expanding other blocks could push the bottom of the page down
+     * with just empty padding.
+     */
+    originalcontainerpadding: null,
+
     /**
      * @param Y the YUI object
      * @param start, the timer starting time, in seconds.
@@ -69,6 +78,69 @@ M.mod_quiz.timer = {
         M.mod_quiz.timer.preview = preview;
         M.mod_quiz.timer.update();
         Y.one('#quiz-timer').setStyle('display', 'block');
+
+        /* 20120622 Colin. Countdown timer customization for keeping timer in view.*/
+        Y.one('#quiz-timer').addClass('stayonscreen');
+        Y.on('scroll', M.mod_quiz.timer.update_position);
+    },
+
+    /* 20120622 Colin. Countdown timer customization for keeping timer in view.*/
+    update_position: function() {
+        var Y = M.mod_quiz.timer.Y;
+        var quiztimer = Y.one('#quiz-timer');
+        var timerY = Math.floor(quiztimer.getY());
+        var scrollY = Y.DOM.docScrollY(quiztimer);
+
+        if (scrollY > timerY) {
+            var timerTop = parseInt(quiztimer.getStyle('top')) || 0;
+            var newTopString = (timerTop + (scrollY - timerY)) + 'px';
+            quiztimer.setStyle('top', newTopString);
+            M.mod_quiz.timer.adjust_container_padding();
+        } else if (scrollY < timerY) {
+            var timerTop = parseInt(quiztimer.getStyle('top')) || 0;
+            if (timerTop > 0) {
+                var toMove = Math.min(timerTop, timerY - scrollY);
+                //toMove = Math.max(toMove / 2, 1);
+                var newTopString = (timerTop - toMove) + 'px';
+                quiztimer.setStyle('top', newTopString);
+                M.mod_quiz.timer.adjust_container_padding();
+            }
+        }
+    },
+
+    /* 20120622 Colin. Used by update_position.*/
+    adjust_container_padding: function() {
+        var Y = M.mod_quiz.timer.Y;
+        var quiztimer = Y.one('#quiz-timer');
+
+        // We need to extend the padding of the ancestor region-content
+        // offsetHeight because it has overflow:hidden, which will hide
+        // the timer as it slides past the bottom of the region-content.
+        var timerheight = quiztimer.get('offsetHeight');
+        var timerbottom = Math.floor(quiztimer.getY()) + timerheight;
+        // MOOD-408 20140910 dhanzely - region class has changed with the
+        // the bootstrapbase layotus, which was causing containerregion
+        // to be null, eventually preventing the timer to stop updating.
+        // Adding check to future-proof.
+        var containerregion = quiztimer.ancestor('.block-region');
+        if (!containerregion) return;
+
+        var containerregionbottom = Math.floor(containerregion.getY()) + containerregion.get('offsetHeight');
+
+        // Adding the 1 in the following line only because Firefox appears to need it sometimes.
+        var paddingneeded = timerbottom - containerregionbottom + 1;
+
+        var containerregionpadding = parseInt(containerregion.getStyle('paddingBottom')) || 0;
+
+        // Save the first padding setting we find so it becomes the minimum.
+        if (!M.mod_quiz.timer.originalcontainerpadding) {
+            M.mod_quiz.timer.originalcontainerpadding = containerregionpadding;
+        }
+
+        var newpaddingtotal = Math.max(containerregionpadding + paddingneeded,
+                                       M.mod_quiz.timer.originalcontainerpadding);
+
+        containerregion.setStyle('paddingBottom', newpaddingtotal + 'px');
     },
 
     /**
@@ -127,6 +199,13 @@ M.mod_quiz.timer = {
         Y.one('#quiz-time-left').setContent(hours + ':' +
                 M.mod_quiz.timer.two_digit(minutes) + ':' +
                 M.mod_quiz.timer.two_digit(seconds));
+
+        /**
+         * 20120622 Colin. Countdown timer customization for keeping timer in view.
+         * We call this here in addition to when scrolling in order to cleanup
+         * and scrolling misses.
+         */
+        M.mod_quiz.timer.update_position();
 
         // Arrange for this method to be called again soon.
         M.mod_quiz.timer.timeoutid = setTimeout(M.mod_quiz.timer.update, 100);
