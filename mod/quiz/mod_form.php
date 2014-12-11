@@ -429,7 +429,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         if ($whenname != 'during') {
             $mform->disabledIf('correctness' . $whenname, 'attempt' . $whenname);
             $mform->disabledIf('specificfeedback' . $whenname, 'attempt' . $whenname);
-            $mform->disabledIf('generalfeedback' . $whenname, 'attempt' . $whenname);
+            // MOOD-74 20140911 dhanzely - Always allow generalfeedback to be enabled
             $mform->disabledIf('rightanswer' . $whenname, 'attempt' . $whenname);
         }
     }

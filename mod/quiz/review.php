@@ -66,7 +66,8 @@ if ($attemptobj->is_own_attempt()) {
     if (!$attemptobj->is_finished()) {
         redirect($attemptobj->attempt_url(null, $page));
 
-    } else if (!$options->attempt) {
+    // MOOD-74 20140911 dhanzely - allow viewing if generalfeedback is enabled.
+    } else if (!$options->attempt && !$options->generalfeedback) {
         $accessmanager->back_to_view_page($PAGE->get_renderer('mod_quiz'),
                 $attemptobj->cannot_review_message());
     }

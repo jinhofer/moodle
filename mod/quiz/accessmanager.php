@@ -524,7 +524,8 @@ class quiz_access_manager {
         $reviewoptions = mod_quiz_display_options::make_from_quiz(
                 $this->quizobj->get_quiz(), $when);
 
-        if (!$reviewoptions->attempt) {
+        // MOOD-74 20140911 dhanzely - allow viewing if generalfeedback is enabled.
+        if (!$reviewoptions->attempt && !$reviewoptions->generalfeedback) {
             return $output->no_review_message($this->quizobj->cannot_review_message($when, true));
 
         } else {

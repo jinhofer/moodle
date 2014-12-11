@@ -104,10 +104,22 @@ class core_question_renderer extends plugin_renderer_base {
 
         $output .= html_writer::start_tag('div', array('class' => 'content'));
 
-        $output .= html_writer::tag('div',
-                $this->add_part_heading($qtoutput->formulation_heading(),
-                    $this->formulation($qa, $behaviouroutput, $qtoutput, $options)),
-                array('class' => 'formulation'));
+        // MOOD-74 20140911 dhanzely - Modified the Quiz module "Review options" so
+        // that is possible to allow viewing "General feedback" without the actual
+        // Question text and attempt. When Questions are displayed by the Quiz module,
+        // the question_display_options value here will be an instance of
+        // mod_quiz_display_options.
+        //
+        // Since the default behavior was to always render the Question text/attempt,
+        // the test condition intentionally applies ONLY when $options is of
+        // mod_quiz_display_options type, otherwise it will render the Question text.
+        if (!$options instanceof mod_quiz_display_options || $options->attempt) {
+                $output .= html_writer::tag('div',
+                        $this->add_part_heading($qtoutput->formulation_heading(),
+                            $this->formulation($qa, $behaviouroutput, $qtoutput, $options)),
+                        array('class' => 'formulation'));
+        }
+
         $output .= html_writer::nonempty_tag('div',
                 $this->add_part_heading(get_string('feedback', 'question'),
                     $this->outcome($qa, $behaviouroutput, $qtoutput, $options)),
