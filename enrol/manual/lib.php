@@ -252,7 +252,7 @@ class enrol_manual_plugin extends enrol_plugin {
             'disableGradeHistory' => $CFG->disablegradehistory,
             'recoverGradesDefault'=> '',
             'useDirectory'        => $addSingleUser,
-            'cohortsAvailable'    => cohort_get_available_cohorts($manager->get_context(), COHORT_COUNT_MEMBERS, 0, 1) ? true : false
+            'cohortsAvailable'    => cohort_get_available_cohorts($manager->get_context(), COHORT_WITH_NOTENROLLED_MEMBERS_ONLY, 0, 1) ? true : false
         );
 
         if ($CFG->recovergradesdefault) {
