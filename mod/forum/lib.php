@@ -780,12 +780,16 @@ function forum_cron() {
 
                 $userfrom->customheaders = array (
                     // Headers to make emails easier to track.
-                    'Precedence: Bulk',
                     'List-Id: "'        . $cleanforumname . '" <moodleforum' . $forum->id . '@' . $hostname.'>',
                     'List-Help: '       . $CFG->wwwroot . '/mod/forum/view.php?f=' . $forum->id,
                     'Message-ID: '      . forum_get_email_message_id($post->id, $userto->id, $hostname),
                     'X-Course-Id: '     . $course->id,
-                    'X-Course-Name: '   . format_string($course->fullname, true)
+                    'X-Course-Name: '   . format_string($course->fullname, true),
+
+                    // Headers to help prevent auto-responders.
+                    'Precedence: Bulk',
+                    'X-Auto-Response-Suppress: All',
+                    'Auto-Submitted: auto-generated',
                 );
 
                 if ($post->parent) {
@@ -1100,7 +1104,12 @@ function forum_cron() {
                             }
                         }
 
-                        $userfrom->customheaders = array ("Precedence: Bulk");
+                        // Headers to help prevent auto-responders.
+                        $userfrom->customheaders = array(
+                                "Precedence: Bulk",
+                                'X-Auto-Response-Suppress: All',
+                                'Auto-Submitted: auto-generated',
+                            );
 
                         $maildigest = forum_get_user_maildigest_bulk($digests, $userto, $forum->id);
                         if ($maildigest == 2) {

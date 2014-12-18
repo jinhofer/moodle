@@ -389,10 +389,8 @@ if (isloggedin() && has_capability('moodle/site:sendmessage', $usercontext)
     echo '</div>';
 }
 
-//if ($currentuser || has_capability('moodle/user:viewdetails', $usercontext) || has_coursecontact_role($id)) {
-// SDLC-84396 20110714 hoang027 >>> display "Full Profile" link regardless of contact role
-if ($currentuser || has_capability('moodle/user:viewdetails', $usercontext)) {
-// <<< SDLC-84396
+if (empty($CFG->forceloginforprofiles) || $currentuser || has_capability('moodle/user:viewdetails', $usercontext)
+        || has_coursecontact_role($id)) {
     echo '<div class="fullprofilelink">';
     echo html_writer::link($CFG->wwwroot.'/user/profile.php?id='.$id, get_string('fullprofile'));
     echo '</div>';
