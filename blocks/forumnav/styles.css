@@ -1,0 +1,14 @@
+.block_forumnav .content ul { margin:0; }
+
+.block_forumnav .content li { 
+        list-style-type:none;
+        text-overflow:ellipsis;
+        overflow:hidden;
+        white-space:nowrap;
+        margin:2px 0; }
+
+
+.block_forumnav .content li.top { background-color:#ddd; text-align:center; }
+/* .block_forumnav .content li.current { background-color:#ddd; } */
+.block_forumnav .content li.bottom { background-color:#ddd; text-align:center; }
+.block_forumnav .content li.unreadpost { font-weight:bold; }

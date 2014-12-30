@@ -1,0 +1,4 @@
+<?php
+
+define('FORUMNAV_DEFAULT_BEFORE_AFTER_NUM', 50);
+
