@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/myu/db" VERSION="20141231" COMMENT="XMLDB file for Moodle local/myu"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="myu_course" COMMENT="Various myu-related settings for courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="course ID"/>
+        <FIELD NAME="skip_portal" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Default to false (0), set to true (1) to prevent the course from being exported/sync to the portal"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="courseid-ind" UNIQUE="true" FIELDS="courseid" COMMENT="Index for courseid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
