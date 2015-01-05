@@ -1,0 +1,80 @@
+.block_moodlekiosk .content {
+	padding: 4px;
+	margin: 0px 20px;
+}
+
+.block_moodlekiosk div.introtext {
+	margin: 0.2em;
+	margin-bottom: 0.5em;
+}
+
+.moodlekiosk-nonacad-ctn,
+.moodlekiosk-acad-ctn {
+	border: 1px solid #ccc;
+	border-radius: 0.5em 0.5em 0.5em 0.5em;
+	padding: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+/* hide the content and let JS turn it on */
+body.jsenabled div.moodlekiosk-nonacad-ctn,
+body.jsenabled div.moodlekiosk-acad-ctn {
+    display: block;
+}
+
+body.jsenabled div.moodlekiosk-nonacad-ctn.hidden-course-list,
+body.jsenabled div.moodlekiosk-acad-ctn.hidden-course-list {
+	display: none;
+}
+
+h2.moodlekiosk-ctn-label, 
+.block_moodlekiosk .content h2.moodlekiosk-ctn-label {
+	margin: 0em;
+	text-align: center;
+}
+
+body.editing .block_moodlekiosk .box {
+	margin-bottom: 0.5em;
+}
+
+body.editing .block_moodlekiosk .box label {
+	display: inline-block;
+	min-width: 18em;
+	text-align: right;
+	margin-right: 0.5em;
+}
+
+
+ul.moodlekiosk-course-list li {
+	list-style-type: none;
+}
+
+ul.moodlekiosk-course-list li.moodlekiosk-course-hidden {
+	display: none;
+}
+
+div.moodlekiosk-term.moodlekiosk-term-hidden {
+	display: none;
+}
+
+div.moodlekiosk-toggle-link-ctn {
+	text-align: center;
+	margin-top: 1em;;
+}
+
+h3.moodlekiosk-term-name {
+	margin-top: 0.5em;
+	margin-bottom: 0em;
+}
+
+.moodlekiosk-course {
+	margin-left: 0.5em;
+}
+
+
+#block-moodlekiosk-search-form {
+	position: relative;
+	width: 100%;
+	margin-top: 2em;
+	text-align: center;
+}
