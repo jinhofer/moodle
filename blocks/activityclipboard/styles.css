@@ -1,0 +1,16 @@
+.block_activityclipboard .block_tree {margin:5px; padding-left:0; overflow:visible;}
+
+.block_activityclipboard .block_tree .tree_item {padding-left: 18px;margin:3px 0px;text-align:left;}
+
+.block_activityclipboard .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 10%;background-repeat: no-repeat;}
+.block_activityclipboard .block_tree .tree_item.branch {cursor:pointer;}
+
+.block_activityclipboard .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed]]);}
+
+.block_activityclipboard .block_tree .collapsed ul {display:none;}
+
+.block_activityclipboard .block_tree li {margin:3px; list-style:none; padding:0;}
+.block_activityclipboard .block_tree li ul {margin:0; padding-left:16px;}
+
+.block_activityclipboard .shared_item .commands {white-space:nowrap;}
+.block_activityclipboard .shared_item .commands img {vertical-align:baseline; cursor:pointer;}
