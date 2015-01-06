@@ -29,7 +29,7 @@ require_once("$CFG->libdir/adminlib.php");
 require_once("$CFG->libdir/coursecatlib.php");
 
 function local_course_extends_settings_navigation($settingsnav, $context) {
-    global $CFG, $PAGE;
+    global $CFG, $COURSE, $PAGE;
 
     // STRY0010024 20140807 dhanzely - Add 'Category course settings' link to category admin block
     if ($context->contextlevel == CONTEXT_COURSECAT) {
@@ -37,6 +37,36 @@ function local_course_extends_settings_navigation($settingsnav, $context) {
             $editurl = new moodle_url('/local/course/editcategorycoursesettings.php', array('categoryid' => $context->instanceid));
             $node = navigation_node::create(get_string('editcategorycoursesettingsthis', 'local_course'), $editurl, navigation_node::TYPE_SETTING, null, 'editcoursesettings', new pix_icon('i/settings', ''));
             $categorynode->add_node($node, 'roles');
+        }
+    }
+
+    if ($context->contextlevel == CONTEXT_COURSE) {
+
+        if (has_capability('moodle/course:visibility', $context) && $courseadminnode = $settingsnav->find('courseadmin', navigation_node::TYPE_UNKNOWN)) {
+
+            if ($COURSE->visible) {
+
+                $editurl = new moodle_url('/local/course/course_visibility.php',
+                                          array('id' => $context->instanceid, 'courseshow' => 0));
+                $node = navigation_node::create(get_string('coursehide', 'local_course'),
+                                                $editurl,
+                                                navigation_node::TYPE_SETTING,
+                                                null,
+                                                'showhidecoursesettings',
+                                                new pix_icon('i/hide', ''));
+                $courseadminnode->add_node($node, 'editsettings');
+            } else {
+
+                $editurl = new moodle_url('/local/course/course_visibility.php',
+                                          array('id' => $context->instanceid, 'courseshow' => 1));
+                $node = navigation_node::create(get_string('courseshow', 'local_course'),
+                                                $editurl,
+                                                navigation_node::TYPE_SETTING,
+                                                null,
+                                                'showhidecoursesettings',
+                                                new pix_icon('i/show', ''));
+                $courseadminnode->add_node($node, 'editsettings');
+            }
         }
     }
 }

@@ -12,6 +12,14 @@ $string['courserequestconfirmation'] = 'Your Moodle course site request has been
 $string['requestanothersite'] = 'Request another course site';
 $string['closewindow'] = 'Close window';
 
+// Course hide/show
+$string['coursechangevisibility'] = 'Confirm course visibility change';
+$string['coursecheckshow'] = 'Are you sure you want to show this course to students?';
+$string['coursecheckhide'] = 'Are you sure you want to hide this course from students?';
+$string['coursehide'] = 'Hide this course';
+$string['coursehiddensubheading'] = '(Hidden from Students)';
+$string['courseshow'] = 'Show this course';
+
 // ppsft search
 $string['ppsftsearch'] = 'Auto-enrollment search options';
 $string['ppsftsearchresults'] = 'Auto-enrollment search results';

@@ -141,6 +141,7 @@ div.coursecache .cm_error .cachedcm { margin:5px; color:black; white-space:pre; 
 #ppsftsearchresulttable { min-width: 800px; }
 body.path-local-course .generaltable .cell { border-color: #CCCCCC; border-style: solid; border-width: 1px; }
 
+#course_visibility_heading { text-align: center; }
 @media (min-width: 768px) {
     #page-local-course-ppsftsearch .mform, #page-local-course-request .mform { max-width: 700px; margin-left: auto; margin-right: auto; }
     #id_requestformfieldset select { min-width:300px; }
