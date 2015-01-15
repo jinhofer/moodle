@@ -1,0 +1,41 @@
+div.library-reserves-ctn .library-reserves-section-title {
+    margin-bottom: 0em;
+}
+
+div.library-reserves-ctn .library-reserves-section-end {
+    margin-bottom: 3em;
+}
+
+div.library-reserves-ctn .library-reserves-heading {
+    font-weight: bold;
+	margin-left: 0em;
+	margin-bottom: 0em;
+}
+
+div.library-reserves-ctn .library-reserves-items {
+	margin-left: 2em;
+}
+
+.mobiletheme div.library-reserves-ctn .library-reserves-items,
+.tablettheme  div.library-reserves-ctn .library-reserves-items {
+	margin-left: 1em;
+}
+
+div.library-reserves-ctn .library-reserves-items li.library-reserves-item {
+    list-style-type: disc; /*STRY0010333 - Add bullets */
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+
+/*STRY0010333 - Add notes */
+div.library-reserves-ctn .library-reserves-note {
+    margin-left: 2em;
+}
+
+.mobiletheme div.library-reserves-ctn .library-reserves-items li.library-reserves-item,
+.tablettheme div.library-reserves-ctn .library-reserves-items li.library-reserves-item {
+    list-style-type: disc;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
