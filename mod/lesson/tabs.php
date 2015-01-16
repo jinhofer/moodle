@@ -58,6 +58,10 @@ if ($lesson->highscores) {
     $row[] = new tabobject('highscores', "$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id", get_string('highscores', 'lesson'));
 }
 
+// STRY0010356 20140610 dhanzely - Add FlowViewer to 2.8
+$flowviewer_link = new moodle_url($CFG->wwwroot.'/mod/lesson/flowviewer.php', array('id' => $cm->id));
+$row[] = new tabobject('flowviewer', "$CFG->wwwroot/mod/lesson/flowviewer.php?id=$cm->id", get_string('flowviewer', 'lesson'), get_string('flowviewer_descr', 'lesson'));
+
 $tabs[] = $row;
 
 
@@ -86,5 +90,8 @@ switch ($currenttab) {
         $tabs[] = $row;
         break;
 }
+
+// STRY0010356 20140610 dhanzely - Add FlowViewer to 2.8
+$this->page->requires->yui_module('moodle-mod_lesson-lesson', 'M.mod_lesson.lesson.init');
 
 print_tabs($tabs, $currenttab, $inactive, $activated);

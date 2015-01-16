@@ -454,3 +454,11 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is {$a}';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is {$a->grade} out of {$a->total}';
 $string['youshouldview'] = 'You should answer at least: {$a}';
+
+// STRY0010356 20140610 dhanzely - Add FlowViewer to 2.8
+$string['flowviewer'] = 'FlowViewer';
+$string['flowviewer_descr'] = 'View the lesson flow';
+$string['flowviewer_feedback'] = 'FlowViewer feedback link';
+$string['flowviewer_feedback_descr'] = 'Link for users to provide feedback on FlowViewer';
+$string['flowviewer_help'] = 'FlowViewer help link';
+$string['flowviewer_help_descr'] = 'Link to provide help on FlowViewer';

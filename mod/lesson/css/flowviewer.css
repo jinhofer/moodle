@@ -1,0 +1,167 @@
+#javascript-required {
+    position: relative;
+    font-size: 14px;
+    top: 1em;
+    left: 1em;
+}
+
+body.jsenabled #javascript-required {
+    display: none;
+}
+
+.lesson-flowviewer-control-container {
+    position: fixed;
+    left: 0.5em;
+    top: 0.5em;
+    width: auto;
+    height: auto;
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    z-index: 99;
+    vertical-align: middle;
+    box-shadow-: 0px 2px 4px #888;
+}
+
+.lesson-flowviewer-control-container .button {
+    width: 1.4em;
+    height: 1.4em;
+    border: 1px solid #ccc;
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    margin: 0.1em;
+    padding: 0.1em 0em 0em 0em;
+    background-color: #fff;
+    display: inline-block;
+    top: 0em;
+    vertical-align: middle;
+}
+
+.lesson-flowviewer-control-container input.button {
+    width: 1.6em;
+    height: 1.6em;
+    color: #888;
+    background-color: #eee;
+    font-weight: bold;
+}
+
+.lesson-flowviewer-control-container .button.toggle-label {
+    width: 5em;
+    font-weight: normal;
+}
+
+.lesson-flowviewer-control-container input.button.active {
+    color: #000;    
+    background-color: #fff;
+}
+
+
+.lesson-flowviewer-control-container .button.give-feedback {
+    width: 9em;
+    margin-left: 1em;    
+    background-color: #fff;
+}
+
+.lesson-flowviewer-control-container .button.help {
+    width: 4em;
+    background-color: #fff;
+}
+
+
+
+/* chart section */
+.lesson-flowviewer-chart-container {
+	position: absolute;
+	left: 5em;
+	top: 5em;
+}
+
+.lesson-flowviewer-page { 
+	border: 1px solid #346789;
+	-moz-border-radius: 0.5em;
+	border-radius: 0.5em;
+	opacity: 0.8;
+	filter: alpha(opacity=80);
+	width: 10em;
+	height: 3em;
+	text-align: center;
+	z-index: 20; 
+	position: absolute;
+	background-color: #eeeeef;
+	color: black;
+	font-family: helvetica;
+	padding: 0.5em;
+	font-size: 1em;
+}
+
+.lesson-flowviewer-page:hover {
+    opacity:0.6;
+	filter:alpha(opacity=60);
+}
+
+
+.lesson-flowviewer-chart-container ._jsPlumb_connector { z-index:4; }
+.lesson-flowviewer-chart-container ._jsPlumb_endpoint, .endpointTargetLabel, .endpointSourceLabel{ 
+    z-index: 21;
+    cursor: pointer; 
+}
+
+
+.lesson-flowviewer-chart-container .aLabel {
+ 	background-color:white; 
+	padding:0.2em;
+	font:12px sans-serif; 
+	color:#444;
+	z-index:21;
+	max-width: 8em;
+	border:1px dotted gray;
+	opacity:0.8;
+	filter:alpha(opacity=80);
+	cursor: pointer;
+}
+
+.lesson-flowviewer-chart-container .aLabel.no-label {
+    display: none;
+}
+    
+.lesson-flowviewer-chart-container .aLabel:hover {
+	z-index: 50;
+	opacity: 1;
+}
+
+.lesson-flowviewer-chart-container .aLabel._jsPlumb_hover {
+	background-color:#5C96BC;
+	color:white;	
+	border:1px solid white;
+	z-index: 50;
+	opacity: 1;
+}
+
+.lesson-flowviewer-chart-container .edge_dot {
+	width: 5px;
+	height: 5px;
+	background-color: #f00;
+	position: absolute;
+}
+
+.lesson-flowviewer-chart-container .firstpage {
+    border: 1px solid #0c0;
+    background-color: #dfd;
+ }
+
+
+.lesson-flowviewer-chart-container #fv_page_EOL {
+    border: 1px solid #555;
+    background-color: #888;
+    color: #fff;
+}
+
+.lesson-flowviewer-chart-container #fv_page_UNSEENPAGE,
+.lesson-flowviewer-chart-container #fv_page_UNANSWEREDPAGE,
+.lesson-flowviewer-chart-container #fv_page_UNSEENBRANCHPAGE,
+.lesson-flowviewer-chart-container #fv_page_RANDOMPAGE,
+.lesson-flowviewer-chart-container #fv_page_RANDOMBRANCH,
+.lesson-flowviewer-chart-container #fv_page_CLUSTERJUMP {
+    border: 1px solid #f55;
+    background-color: #fdd;
+}

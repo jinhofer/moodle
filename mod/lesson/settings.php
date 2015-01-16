@@ -68,4 +68,11 @@ if ($ADMIN->fulltree) {
             get_string('configactionaftercorrectanswer', 'lesson'), 0, $defaultnextpages));
     $settings->add(new admin_setting_configcheckbox('lesson/requiremodintro',
         get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
+
+    /* FlowViewer specific */
+    $settings->add(new admin_setting_configtext('lesson/flowviewer_feedback_link', get_string('flowviewer_feedback', 'lesson'),
+            get_string('flowviewer_feedback_descr','lesson'), '', PARAM_RAW));
+
+    $settings->add(new admin_setting_configtext('lesson/flowviewer_help_link', get_string('flowviewer_help', 'lesson'),
+            get_string('flowviewer_help_descr','lesson'), '', PARAM_RAW));
 }
