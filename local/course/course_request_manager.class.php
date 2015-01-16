@@ -47,7 +47,7 @@ class course_request_manager {
      * migration repository and updating the request record.
      */
     public function process_migration_response($requestid, $filepath) {
-        global $DB;
+        global $DB, $USER;
 
         // Validate requestid and filepath.
         $file_requestid = local_course_requestid_from_filename($filepath);
@@ -75,6 +75,8 @@ class course_request_manager {
         // Update request status.
         $DB->update_record('course_request_u',
                            array('id'=>$requestid,
+                                 'timemodified'=>time(),
+                                 'modifierid'=>$USER->id,
                                  'status'=>$newstatus,
                                  'backupfile'=>$destination));
 
@@ -88,9 +90,12 @@ class course_request_manager {
      * Convenience method for setting the request status.
      */
      private function set_request_status($request, $status) {
-        global $DB;
+        global $DB, $USER;
         $requestid = is_numeric($request) ? $request : $request->id;
-        $DB->set_field('course_request_u', 'status', $status, array('id'=>$requestid));
+        $DB->update_record('course_request_u', array('id'           => $requestid,
+                                                     'timemodified' => time(),
+                                                     'modifierid'   => $USER->id,
+                                                     'status'       => $status));
     }
 
     /**
@@ -209,6 +214,7 @@ class course_request_manager {
         $request->categoryid = $this->lookup_categoryid($request);
 
         $request->status = CRS_REQ_STATUS_NEW;
+        $request->timecreated = time();
 
         $requestid = $DB->insert_record('course_request_u', $request);
 
@@ -433,7 +439,7 @@ SQL;
      *
      */
     public function create_course($requestid) {
-        global $DB;
+        global $DB, $USER;
 
         $request = $DB->get_record('course_request_u', array('id'=>$requestid));
         if (!$request) {
@@ -450,6 +456,8 @@ SQL;
 
         $DB->update_record('course_request_u', array('id'       => $requestid,
                                                      'courseid' => $courseid,
+                                                     'timemodified' => time(),
+                                                     'modifierid'   => $USER->id,
                                                      'status'   => CRS_REQ_STATUS_COMPLETE));
 
         $this->initialize_enrollment_instances($requestid, $courseid);

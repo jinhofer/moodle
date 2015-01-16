@@ -161,6 +161,36 @@ function xmldb_local_course_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014080800, 'local', 'course');
     }
 
+    if ($oldversion < 2015011500) {
+
+        // Define field timecreated to be added to course_request_u.
+        $table = new xmldb_table('course_request_u');
+
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'requestform');
+
+        // Conditionally launch add field timecreated.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timecreated');
+
+        // Conditionally launch add field timemodified.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('modifierid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timemodified');
+
+        // Conditionally launch add field modifierid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Course savepoint reached.
+        upgrade_plugin_savepoint(true, 2015011500, 'local', 'course');
+    }
+
     return true;
 }
 

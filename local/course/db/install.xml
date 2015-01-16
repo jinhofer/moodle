@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/course/db" VERSION="20140710" COMMENT="XMLDB file for Moodle local/course"
+<XMLDB PATH="local/course/db" VERSION="20150115" COMMENT="XMLDB file for Moodle local/course"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -21,6 +21,9 @@
         <FIELD NAME="sections" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The section numbers of the ppsft classes that the user is requesting be associated with this course.  This is intended only for presentation as-is on the pending course request page and only relevant for academic requests submitted by a user who is not an official instructor for the ppsft course."/>
         <FIELD NAME="callnumbers" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Call numbers of the ppsft classes that the user is requesting be associated with this course.  Intended only for display on the pending course request page and only relevant for academic requests submitted by a user who is not an official instructor for the ppsft course."/>
         <FIELD NAME="requestform" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Indicates which form the requester used: nonacad, acad."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time of request creation"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time that the request record was last updated."/>
+        <FIELD NAME="modifierid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The Moodle id of the user who last updated the record."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

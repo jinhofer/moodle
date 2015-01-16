@@ -26,6 +26,7 @@ class local_course_request_form_edit extends local_course_request_form_base {
     function definition() {
         $mform =& $this->_form;
         $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
 
         $this->define_form_header();
 
@@ -59,6 +60,8 @@ if (!empty($requestid) and confirm_sesskey()) {
 
     if ($formdata = $editform->get_data()) {
         $requestupdate = $formdata;
+        $requestupdate->timemodified = time();
+        $requestupdate->modifierid   = $USER->id;
         $DB->update_record('course_request_u', $requestupdate);
         redirect($returnurl);
     }
