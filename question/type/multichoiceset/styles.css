@@ -60,3 +60,15 @@ body#page-question-type-multichoiceset .fitem .felement.fstatic {
 body#page-question-type-multichoiceset div[id^=fitem_id_][id*=penalty] {
     margin-bottom: 2em;
 }
+
+.que.multichoiceset .answer div.r0 label,
+.que.multichoiceset .answer div.r1 label,
+.que.multichoiceset .answer div.r0 div.specificfeedback,
+.que.multichoiceset .answer div.r1 div.specificfeedback {
+    text-indent: 0px;
+}
+.que.multichoiceset .answer div.r0,
+.que.multichoiceset .answer div.r1 {
+    padding: 0.3em 0px 0.3em 25px;
+    text-indent: -25px;
+}
