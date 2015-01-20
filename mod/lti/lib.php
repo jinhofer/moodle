@@ -220,14 +220,15 @@ function lti_get_types() {
     $help     = get_string('modulename_help', 'mod_lti');
     $help    .= html_writer::tag('div', $OUTPUT->doc_link($link, $linktext, true), array('class' => 'helpdoclink'));
 
+    // STRY0010148 20140613 dhanzely - Displaying subtools first
+    $types = array_merge($types, $subtypes);
+
     $type           = new stdClass();
     $type->modclass = MOD_CLASS_ACTIVITY;
     $type->type     = '';
     $type->typestr  = get_string('generaltool', 'mod_lti');
     $type->help     = $help;
     $types[]        = $type;
-
-    $types = array_merge($types, $subtypes);
 
     $type           = new stdClass();
     $type->modclass = MOD_CLASS_ACTIVITY;

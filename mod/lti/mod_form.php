@@ -57,7 +57,29 @@ class mod_lti_mod_form extends moodleform_mod {
         global $DB, $PAGE, $OUTPUT, $USER, $COURSE;
 
         if ($type = optional_param('type', false, PARAM_ALPHA)) {
-            component_callback("ltisource_$type", 'add_instance_hook');
+
+            // STRY0010148 20140613 dhanzely - Using 'type' param to pass tool type id to course/modedit.php
+            // to be able to retrieve and pre-populate add instance form with selected tool configuration values.
+            // However, course/mod.php parses 'type' param as PARAM_ALPHA, so I've implemented alpha/int conversion
+            // functions in the ltisource_chooser plugin as a work around.
+            //
+            // If the 'type' parameter matches the name of an 'ltisource' sub-plugin (e.g. ltisource_dummy), the
+            // original funcationality gets performed.
+            //
+            // @TODO Need to rethink this and make more generalized.
+            //
+            foreach (core_component::get_plugin_list('ltisource') as $name => $dir) {
+                if ($name == $type) {
+                    component_callback("ltisource_$type", 'add_instance_hook');
+                } else {
+                    $data_overrides = component_callback("ltisource_$name", 'add_instance_hook', array($type));
+                    if (is_array($data_overrides)) {
+                        foreach ($data_overrides as $key => $value) {
+                            $this->current->$key = $value;
+                        }
+                    }
+                }
+            }
         }
 
         $this->typeid = 0;

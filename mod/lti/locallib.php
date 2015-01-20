@@ -929,6 +929,14 @@ function lti_get_type_config($typeid) {
         }
     }
 
+    // STRY0010148 20140613 dhanzely - load ltisource type configs
+    foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {
+        $addlconfig = component_callback("ltisource_$pluginname", 'get_type_config', array($typeid));
+        foreach ($addlconfig as $name => $value) {
+            $typeconfig[$name] = $value;
+        }
+    }
+
     return $typeconfig;
 }
 
@@ -1314,6 +1322,11 @@ function lti_get_type_type_config($id) {
         $type->lti_module_class_type = $config['module_class_type'];
     }
 
+    // STRY0010148 20140613 dhanzely - Add settings from source plugins
+    foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {
+        component_callback("ltisource_$pluginname", 'get_type_type_config', array($type, $config));
+    }
+
     return $type;
 }
 
@@ -1353,6 +1366,11 @@ function lti_update_type($type, $config) {
                 $record->value = $value;
                 lti_update_config($record);
             }
+        }
+
+        // STRY0010148 20140613 dhanzely - Update type via source plugins
+        foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {
+            component_callback("ltisource_$pluginname", 'update_type', array($type, $config));
         }
     }
 }

@@ -120,6 +120,11 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addHelpButton('lti_launchcontainer', 'default_launch_container', 'lti');
         $mform->setType('lti_launchcontainer', PARAM_INT);
 
+        // STRY0010148 20140613 dhanzely - Add settings from source plugins
+        foreach (core_component::get_plugin_list('ltisource') as $name => $dir) {
+            component_callback("ltisource_$name", 'edit_types_form', array($mform, !empty($this->_customdata->isadmin)));
+        }
+
         if (!$istool) {
             // Add privacy preferences fieldset where users choose whether to send their data.
             $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));
