@@ -255,6 +255,10 @@ abstract class screen {
         );
 
         $PAGE->requires->js_init_call('M.gradereport_singleview.init', array(), false, $module);
+
+        $PAGE->requires->strings_for_js(array('searchitemlist',
+                                             'searchuserlist'),
+                                       'gradereport_singleview');
     }
 
     /**

@@ -49,6 +49,24 @@ Feature: We can use Single view
     And I navigate to "Grades" node in "Course administration"
 
   @javascript
+  Scenario: I can use search options.
+    Given I click on "Single view" "option"
+    And I click on "Toggle search options" "button"
+    Then I should see "Test assignment one"
+    And I should see "Test assignment two"
+    And I should see "Test assignment three"
+    And I should see "Test assignment four"
+    And I should see "Student 1"
+    And I should see "Student 2"
+    And I should see "Student 3"
+    And I should see "Student 4"
+    When I set the following fields to these values:
+        | Search item list: | one |
+        | Search user list: | student 1 |
+    Then I should see "Test assignment one"
+    And I should see "Student 1"
+
+  @javascript
   Scenario: I can update grades, add feedback and exclude grades.
     Given I click on "Single view" "option"
     And I click on "Student 4" "option"

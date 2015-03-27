@@ -1,25 +1,24 @@
-.path-grade-report-singleview div.reporttable {
-  text-align: center;
+.path-grade-report-singleview div.generalbox {
+  margin: 0;
+  margin-bottom: 15px;
 }
 
-.path-grade-report-singleview div.groupselector,
-.path-grade-report-singleview div.reporttable form div.singleview_buttons,
-.path-grade-report-singleview div.selectitems {
+.path-grade-report-singleview div.reporttable form div.singleview_buttons {
     display: block;
     text-align: right;
     clear: both;
 }
-.dir-rtl.path-grade-report-singleview div.groupselector,
-.dir-rtl.path-grade-report-singleview div.reporttable form div.singleview_buttons,
-.dir-rtl.path-grade-report-singleview div.selectitems {
+.dir-rtl.path-grade-report-singleview div.reporttable form div.singleview_buttons {
     text-align: left;
 }
 
 .path-grade-report-singleview div.singleselect+div.singleselect select,
+.path-grade-report-singleview div.singleselect+div.singleselect .filter,
 .path-grade-report-singleview div.groupselector select {
     margin-right: 0px;
 }
 dir-rtl.path-grade-report-singleview div.singleselect+div.singleselect select,
+dir-rtl.path-grade-report-singleview div.singleselect+div.singleselect .filter,
 dir-rtl.path-grade-report-singleview div.groupselector select {
     margin-right: 10px;
     margin-left: 0px;
@@ -52,10 +51,15 @@ dir-rtl.path-grade-report-singleview div.groupselector select {
 .path-grade-report-singleview .reporttable tbody td.range {
   white-space: nowrap;
 }
-.path-grade-report-singleview .reporttable tbody th > * {
+.path-grade-report-singleview .generaltable tbody th > * {
   display: inline-block;
   vertical-align: middle;
   margin: 0 2px;
+}
+
+.paging{
+   text-align: center;
+   clear: both;
 }
 
 .path-grade-report-singleview .itemnav {
@@ -103,13 +107,15 @@ dir-rtl.path-grade-report-singleview div.groupselector select {
 }
 
 .path-grade-report-singleview .singleselect select,
+.path-grade-report-singleview .singleselect .filter,
 .path-grade-report-singleview div.reporttable form .singleview_bulk select,
 .path-grade-report-singleview div.reporttable form .singleview_bulk input {
   margin-left: 10px;
   margin-right: 10px;
 }
 
-
+.path-grade-report-singleview div.groupselector,
+.path-grade-report-singleview div.groupselector,
 .path-grade-report-singleview .singleview_bulk > fieldset {
   display: block;
 }
@@ -120,4 +126,32 @@ dir-rtl.path-grade-report-singleview div.groupselector select {
 }
 .dir-rtl.path-grade-report-singleview div.reporttable form .singleview_bulk > div.enable {
   text-align: right;
+}
+
+.path-grade-report-singleview div.singleselect {
+    max-width: 50%;
+    margin-right: 0;
+}
+
+.path-grade-report-singleview div.singleselect label {
+    text-align: left;
+}
+
+.path-grade-report-singleview .singleselect select {
+    min-width: 220px;
+    max-width: 100%;
+}
+
+.path-grade-report-singleview div.singleselect label {
+    font-weight: bold;
+}
+
+.path-grade-report-singleview div.groupselector,
+.path-grade-report-singleview #toggle-search-container, .path-grade-report-singleview div.selectitems {
+    text-align: left;
+}
+
+.dir-rtl.path-grade-report-singleview div.groupselector,
+.dir-rtl.path-grade-report-singleview #toggle-search-container, .dir-rtl.path-grade-report-singleview div.selectitems {
+    text-align: right;
 }

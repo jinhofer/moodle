@@ -114,6 +114,12 @@ class select extends screen {
             $OUTPUT->notification(get_string('noscreens', 'gradereport_singleview'));
         }
 
+        $button = \html_writer::tag('button', get_string('togglesearch', 'gradereport_singleview'), array('id' => 'toggle-search',
+                  'value' => get_string('togglesearch', 'gradereport_singleview')));
+        $button = \html_writer::div($button, null, array('id' => 'toggle-search-container'));
+        $html = \html_writer::div($html);
+        $html = $button.$html;
+
         return $html;
     }
 
