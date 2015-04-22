@@ -1517,12 +1517,13 @@ class page_requirements_manager {
     public function get_top_of_body_code() {
         // First the skip links.
         $links = '';
-        $attributes = array('class'=>'skip');
+        $attributes = array('class' => 'skip', 'href' => '#');
         foreach ($this->skiplinks as $url => $text) {
-            $attributes['href'] = '#' . $url;
+            $jscall = 'Y.one("#'.$url.'").ancestor("div").one("a").focus();';
+            $attributes['onClick'] = $jscall;
             $links .= html_writer::tag('a', $text, $attributes);
         }
-        $output = html_writer::tag('div', $links, array('class'=>'skiplinks')) . "\n";
+        $output = html_writer::tag('div', $links, array('class' => 'skiplinks')) . "\n";
 
         // Then the clever trick for hiding of things not needed when JS works.
         $output .= html_writer::script("document.body.className += ' jsenabled';") . "\n";

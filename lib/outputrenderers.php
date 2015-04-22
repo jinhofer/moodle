@@ -1393,8 +1393,11 @@ class core_renderer extends renderer_base {
             $output = '';
             $skipdest = '';
         } else {
-            $output = html_writer::tag('a', get_string('skipa', 'access', $skiptitle), array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'));
-            $skipdest = html_writer::tag('span', '', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
+            $jscall = 'Y.one("#sb-'.$bc->skipid.'").focus();';
+            $output = html_writer::tag('a', get_string('skipa', 'access', $skiptitle),
+                      array('href' => '#', 'class' => 'skip-block', 'onclick' => $jscall));
+            $skipdest = html_writer::tag('span', '',
+                      array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to', 'tabindex' => 0));
         }
 
         $output .= html_writer::start_tag('div', $bc->attributes);
