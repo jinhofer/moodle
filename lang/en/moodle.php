@@ -340,6 +340,7 @@ $string['coursehelpnewsitemsnumber'] = 'Number of recent items from the news for
 $string['coursehelpnumberweeks'] = 'Number of sections in the course (applies to certain course formats only).';
 $string['coursehelpshowgrades'] = 'Enable the display of the gradebook. It does not prevent grades from being displayed within the individual activities.';
 $string['coursehidden'] = 'This course is currently unavailable to students';
+$string['coursehiddensubheading'] = '(Hidden)';
 $string['courseoverviewfiles'] = 'Course summary files';
 $string['courseoverviewfilesext'] = 'Course summary files extensions';
 $string['courseoverviewfileslimit'] = 'Course summary files limit';
