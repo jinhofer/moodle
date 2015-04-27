@@ -2904,6 +2904,49 @@ EOD;
     }
 
     /**
+     * Construct a course menu, listing and providing links to all courses
+     * in which the user is enrolled.
+     *
+     * @return string HTML fragment
+     */
+    public function course_menu() {
+        global $USER, $CFG, $PAGE;
+        // Build the dropdown.
+        $returnhtml = '<ul class="nav">
+                           <li class="dropdown courses">
+                               <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="'.get_string('mycourses').'">';
+        $returnhtml .= get_string('mycourses');
+        $returnhtml .= '<b class="caret"></b></a>';
+        // Add HTML to the items.
+        $returnhtml .= '<ul id="course-panel" class="dropdown-menu">';
+        $sortorder = 'visible DESC';
+        // Prevent undefined $CFG->navsortmycoursessort errors.
+        if (empty($CFG->navsortmycoursessort)) {
+            $CFG->navsortmycoursessort = 'sortorder';
+        }
+        // Append the chosen sortorder.
+        $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
+        $courses = enrol_get_my_courses(null, $sortorder);
+        foreach ($courses as $course) {
+            $coursecontext = context_course::instance($course->id);
+            $url = new moodle_url('/course/view.php', array('id' => $course->id));
+            $title = format_string($course->fullname, true, array('context' => $coursecontext));
+            $href = $url->out();
+            $id = 'dynamic_user-course_'.$course->id;
+            $hidden = $course->visible ? '' : ' '.get_string('coursehiddensubheading');
+            $returnhtml .= '<li><a href="'.$href.'" id="'.$id.'">'.$title.$hidden.'</a></li>';
+        }
+
+        // Add the my courses link and close it all out.
+        $returnhtml .= '<li><a href="'.$CFG->wwwroot.'/my/" id="all-user-courses">'.get_string('myhome').'</a></li>
+                        </ul></li></ul>';
+
+        return $returnhtml;
+    }
+
+
+
+    /**
      * Construct a user menu, returning HTML that can be echoed out by a
      * layout file.
      *
