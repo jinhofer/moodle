@@ -888,7 +888,8 @@ abstract class repository implements cacheable_object {
         // the file needs to copied to draft area
         $stored_file = self::get_moodle_file($source);
         if ($maxbytes != -1 && $stored_file->get_filesize() > $maxbytes) {
-            throw new file_exception('maxbytes');
+            $maxbytesdisplay = display_size($maxbytes);
+            throw new file_exception('maxbytesforfile', $maxbytesdisplay);
         }
         // Validate the size of the draft area.
         if (file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $stored_file->get_filesize())) {
