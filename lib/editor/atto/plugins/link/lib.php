@@ -35,6 +35,11 @@ function atto_link_strings_for_js() {
                                           'unlink',
                                           'enterurl',
                                           'browserepositories',
+                                          'popupoptions',
+                                          'popupurl',
+                                          'windowname',
+                                          'windowsize',
+                                          'windowpos',
                                           'openinnewwindow'),
                                     'atto_link');
 }
