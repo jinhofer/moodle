@@ -189,8 +189,10 @@ M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {
     expand = Y.one('.' + classname);
 
     full = Y.one('.full_' + suffix);
-    if (full) {
-        full.hide(false);
+    summary = Y.one('.summary_' + suffix);
+    if (full && summary) {
+        summary.hide(false);
+        full.show(false);
         full.toggleClass('hidefull');
     }
     if (expand) {
