@@ -33,6 +33,9 @@ var ARIACONTROLS = 'aria-controls',
     EVENTDELAY = 'delay',
     EVENTTITLE = 'eventtitle',
     INNERHTML = 'innerHTML',
+    CONTROL = 'calcontrol',
+    NEXTMONTH = 'next_month',
+    PREVMONTH = 'previous_month',
 
     /**
      * Overlay manager for the Moodle calendar.
@@ -88,6 +91,71 @@ Y.extend(Info, Y.Base, {
         var body = Y.one(Y.config.doc.body);
         body.delegate(['mouseenter', 'focus'], this._startShow, CALENDAREVENT, this);
         body.delegate(['mouseleave', 'blur'], this._startHide, CALENDAREVENT, this);
+        body.delegate('click', this._loadCalendar, DOT + CONTROL + DOT + PREVMONTH, this, true);
+        body.delegate('click', this._loadCalendar, DOT + CONTROL + DOT + NEXTMONTH, this, false);
+        body.delegate('key', this._loadCalendar, 'enter',  DOT + CONTROL + DOT + PREVMONTH, this, true);
+        body.delegate('key', this._loadCalendar, 'enter',  DOT + CONTROL + DOT + NEXTMONTH, this, false);
+    },
+
+    /**
+     * Handler to obtain information and load content for the calendar
+     *
+     * @method _loadCalendar
+     * @param {EventFacade} e
+     * @param {Boolean} prev Whether or not the previous month was clicked
+     */
+
+    _loadCalendar: function(e, prev) {
+        var time = this._getInfo(true, prev),
+            courseID = this._getInfo(false, prev);
+
+        var uri = M.cfg.wwwroot + "/blocks/calendar_month/ajax.php?time="+time+"&courseID="+courseID,
+            cfg = {
+                on: {
+                    complete: function(id, o) {
+                        var data = o.responseText,
+                            target = Y.one('table.minicalendar.calendartable');
+                        Y.one('div.block_calendar_month div.content').replaceChild(data, target);
+                        if (prev) {
+                            Y.one(DOT + CONTROL + DOT + PREVMONTH).focus();
+                        }
+                        else {
+                            Y.one(DOT + CONTROL + DOT + NEXTMONTH).focus();
+                        }
+                    }
+                }
+            };
+
+        Y.io(uri, cfg);
+    },
+
+    /**
+     * Handler to get time and courseID from the calendar block
+     *
+     * @method _getInfo
+     * @param {Boolean} time Whether or not we want to obtain the time to be laoded
+     * @param {Boolean} prev Whether or not we are loading the previous month
+     */
+
+    _getInfo: function(time, prev) {
+        var prevY = Y.one(DOT + CONTROL + DOT + PREVMONTH),
+            nextY = Y.one(DOT + CONTROL + DOT + NEXTMONTH);
+        if (prev) {
+            if (time) {
+                return prevY.get('id');
+            }
+            else {
+                return prevY.getAttribute('data-id');
+            }
+        }
+        else {
+            if (time) {
+                return nextY.get('id');
+            }
+            else {
+                return nextY.getAttribute('data-id');
+            }
+        }
     },
 
     /**

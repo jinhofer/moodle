@@ -848,8 +848,10 @@ function calendar_top_controls($type, $data) {
 
     switch ($type) {
         case 'frontpage':
-            $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), $urlbase, false, false, false, true, $prevmonthtime);
-            $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), $urlbase, false, false, false, true, $nextmonthtime);
+            $prevlink = html_writer::tag('a', '◄', array('tabindex' => '0', 'class' => 'calcontrol previous_month previous',
+            'style' => 'cursor: pointer;', 'id' => $prevmonthtime, 'data-id' => $data['id']));
+            $nextlink = html_writer::tag('a', '►', array('tabindex' => '0', 'class' => 'calcontrol next_month next',
+            'style' => 'cursor: pointer;', 'id' => $nextmonthtime, 'data-id' => $data['id']));
             $calendarlink = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view' => 'month')), false, false, false, $time);
 
             if (!empty($data['id'])) {
@@ -873,8 +875,10 @@ function calendar_top_controls($type, $data) {
 
             break;
         case 'course':
-            $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), $urlbase, false, false, false, true, $prevmonthtime);
-            $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), $urlbase, false, false, false, true, $nextmonthtime);
+            $prevlink = html_writer::tag('a', '◄', array('tabindex' => '0', 'class' => 'calcontrol previous_month previous',
+            'style' => 'cursor: pointer;', 'id' => $prevmonthtime, 'data-id' => $data['id']));
+            $nextlink = html_writer::tag('a', '►', array('tabindex' => '0', 'class' => 'calcontrol next_month next',
+            'style' => 'cursor: pointer;', 'id' => $nextmonthtime, 'data-id' => $data['id']));
             $calendarlink = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view' => 'month')), false, false, false, $time);
 
             if (!empty($data['id'])) {
