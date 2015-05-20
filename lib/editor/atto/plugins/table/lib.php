@@ -47,7 +47,30 @@ function atto_table_strings_for_js() {
                                           'moverowdown',
                                           'moverowup',
                                           'deleterow',
-                                          'deletecolumn'),
+                                          'deletecolumn',
+                                          'borders',
+                                          'bordersize',
+                                          'bordercolor',
+                                          'borderstyle',
+                                          'none',
+                                          'all',
+                                          'backgroundcolor',
+                                          'outer'),
                                     'atto_table');
 }
 
+/**
+ * Set params for this plugin
+ * @param string $elementid
+ * @param string $options
+ * @param string $foptions
+ */
+function atto_table_params_for_js($elementid, $options, $foptions) {
+    $params = array('allowborder' => get_config('atto_table', 'allowborder'),
+                    'allowborderstyles' => get_config('atto_table', 'allowborderstyle'),
+                    'borderstyles' => get_config('atto_table', 'borderstyles'),
+                    'allowbordersize' => get_config('atto_table', 'allowbordersize'),
+                    'allowbordercolor' => get_config('atto_table', 'allowbordercolor'),
+                    'allowbackgroundcolor' => get_config('atto_table', 'allowbackgroundcolor'));
+    return $params;
+}
