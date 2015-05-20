@@ -113,8 +113,7 @@ class core_user_renderer extends plugin_renderer_base {
             $heading = get_string('allparticipants');
         }
 
-        $content = html_writer::start_tag('form', array('action' => new moodle_url($url)));
-        $content .= html_writer::start_tag('div');
+        $content = html_writer::start_tag('div');
 
         // Search utility heading.
         $content .= $OUTPUT->heading($heading.get_string('labelsep', 'langconfig').$usercount.'/'.$totalcount, 3);
@@ -159,11 +158,31 @@ class core_user_renderer extends plugin_renderer_base {
 
         $content .= html_writer::end_tag('div');
         $content .= html_writer::tag('div', '&nbsp;');
-        $content .= html_writer::end_tag('form');
 
-        return $content;
+        // Call the content as a moodleform.
+        $usersearchform = new user_search_form(null, $content);
+        return $usersearchform->render();
     }
+}
 
+require_once($CFG->libdir.'/formslib.php');
+/**
+ * Allows classes to call moodleform functions
+ * @copyright   2015 Joseph Inhofer <jinhofer@umn.edu>
+ * @license     http://www.gnu.org/copyleft/glp.html GNU GPL v3 or later
+ */
+class user_search_form extends moodleform {
+    /**
+     * This will initiate an instance of moodleform
+     * @return moodleform
+     */
+    public function definition() {
+        $mform = $this->_form;
+        $content = $this->_customdata;
+        $mform->addElement('header', 'filter_options', get_string('filter'));
+        $mform->addElement('static', 'filter_content', null, $content);
+        $mform->setExpanded('filter_options', false);
+    }
 }
 
 /**

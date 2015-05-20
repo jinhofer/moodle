@@ -240,3 +240,15 @@
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+.path-grade-report-grader div.fitem.femptylabel .fitemtitle {
+    display: none;
+}
+
+.path-grade-report-grader div.fitem.femptylabel .felement.fstatic {
+    margin-left: 0;
+}
+
+.path-grade-report-grader #id_filter_options legend.ftoggler {
+    border-bottom: none;
+}
