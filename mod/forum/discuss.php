@@ -42,6 +42,15 @@ $PAGE->set_url($url);
 $discussion = $DB->get_record('forum_discussions', array('id' => $d), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $discussion->course), '*', MUST_EXIST);
 $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+
+// Add subplugin data to $forum
+foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+    $subplugin_data = component_callback("forumsettings_$pluginname", 'get_data', array($forum->id));
+    foreach ($subplugin_data as $key => $value) {
+        $forum->$key = $value;
+    }
+}
+
 $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 
 require_course_login($course, true, $cm);
@@ -263,6 +272,13 @@ if (!$canreply and $forum->type !== 'news') {
         // normal users with temporary guest access see this link too, they are asked to enrol instead
         $canreply = enrol_selfenrol_available($course->id);
     }
+}
+
+/// Add cutoff date string if it a) is enabled, b) the user cannot post
+/// after the cutoff, and c) it is past the cutoff date
+/// Change to use cutoffdate subplugin
+foreach (get_plugin_list('forumsettings') as $pluginname => $dir) {
+    component_callback("forumsettings_$pluginname", 'display_notification', array($modcontext, $forum));
 }
 
 // Output the links to neighbour discussions.
