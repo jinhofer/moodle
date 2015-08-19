@@ -1394,8 +1394,12 @@ class core_renderer extends renderer_base {
             $output = '';
             $skipdest = '';
         } else {
-            $output = html_writer::tag('a', get_string('skipa', 'access', $skiptitle), array('href' => '#sb-' . $bc->skipid, 'class' => 'skip-block'));
-            $skipdest = html_writer::tag('span', '', array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
+            $skipid = $bc->skipid + 1;
+            $output = html_writer::tag('a', get_string('skipa', 'access', $skiptitle),
+                      array('href' => '#', 'class' => 'skip skip-block', 'id'=>'fsb-' . $bc->skipid,
+                      'data-target1' => '#sb-'.$bc->skipid, 'data-target2' => '#fsb-'.$skipid));
+            $skipdest = html_writer::tag('span', '',
+                      array('id' => 'sb-' . $bc->skipid, 'class' => 'skip-block-to'));
         }
 
         $output .= html_writer::start_tag('div', $bc->attributes);
