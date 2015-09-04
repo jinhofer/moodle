@@ -494,16 +494,21 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
                     }
                 }
                 if (this.report.isediting) {
-                    if (args.properties.itemtype == 'scale') {
-                        info.cell.one('#grade_'+r.userid+'_'+r.itemid).all('options').each(function(option){
-                            if (option.get('value') == finalgrade) {
-                                option.setAttribute('selected', 'selected');
-                            } else {
-                                option.removeAttribute('selected');
-                            }
-                        });
-                    } else {
-                        info.cell.one('#grade_'+r.userid+'_'+r.itemid).set('value', finalgrade);
+                    var grade = info.cell.one('#grade_'+r.userid+'_'+r.itemid);
+                    if (grade) {
+                        if (args.properties.itemtype == 'scale') {
+                            grade.all('options').each(function(option){
+                                if (option.get('value') == finalgrade) {
+                                    option.setAttribute('selected', 'selected');
+                                } else {
+                                    option.removeAttribute('selected');
+                                }
+                            });
+                        } else {
+                            grade.set('value', finalgrade);
+                        }
+                    } else if (info.cell.one('.gradevalue')) {
+                        info.cell.one('.gradevalue').set('innerHTML',finalgrade);
                     }
                 } else {
                     // If there is no currently editing field or if this cell is not being currently edited
@@ -608,8 +613,10 @@ M.gradereport_grader.classes.existingfield = function(ajax, userid, itemid) {
         this.oldgrade = '';
     }
 
-    // On blur save any changes in the grade field
-    this.grade.on('blur', this.submit, this);
+    if (this.grade) {
+        // On blur save any changes in the grade field
+        this.grade.on('blur', this.submit, this);
+    }
 
     // Check if feedback is enabled
     if (this.editfeedback) {
