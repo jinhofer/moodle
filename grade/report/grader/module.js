@@ -656,7 +656,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
                                 option.removeAttribute('selected');
                             }
                         });
-                    } else {
+                    } else if (info.cell.one('#grade_'+r.userid+'_'+r.itemid)) {
                         info.cell.one('#grade_'+r.userid+'_'+r.itemid).set('value', finalgrade);
                     }
                 } else {
@@ -680,7 +680,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
         args.properties.cell.addClass('ajaxoverridden');
     } else {
         var p = args.properties;
-        if (args.type == 'grade') {
+        if (args.type == 'grade' && p.cell.one('.gradevalue')) {
             var oldgrade = args.values.oldgrade;
             p.cell.one('.gradevalue').set('innerHTML',oldgrade);
         } else if (args.type == 'feedback') {
@@ -762,8 +762,10 @@ M.gradereport_grader.classes.existingfield = function(ajax, userid, itemid) {
         this.oldgrade = '';
     }
 
-    // On blur save any changes in the grade field
-    this.grade.on('blur', this.submit, this);
+    if (this.grade) {
+        // On blur save any changes in the grade field
+        this.grade.on('blur', this.submit, this);
+    }
 
     // Check if feedback is enabled
     if (this.editfeedback) {
