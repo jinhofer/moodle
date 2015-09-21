@@ -811,18 +811,18 @@ class core_media_player_wmp extends core_media_player {
         <param name="ShowGotoBar" value="false" />
         <param name="EnableFullScreenControls" value="true" />
         <param name="uimode" value="full" />
-        <!--[if !IE]>-->
+        <!--[if !IE]>
         <object data="$url" type="$mimetype" $size>
             <param name="src" value="$url" />
             <param name="controller" value="true" />
             <param name="autoplay" value="false" />
             <param name="autostart" value="false" />
             <param name="resize" value="scale" />
-        <!--<![endif]-->
+        <![endif]-->
             $fallback
-        <!--[if !IE]>-->
+        <!--[if !IE]>
         </object>
-        <!--<![endif]-->
+        <![endif]-->
     </object>
 </span>
 OET;
@@ -875,7 +875,7 @@ class core_media_player_qt extends core_media_player {
         <param name="autoplay" value="false" />
         <param name="autostart" value="false" />
         <param name="scale" value="aspect" />
-        <!--[if !IE]>-->
+        <!--[if !IE]>
         <object data="$url" type="$mimetype" $size>
             <param name="src" value="$url" />
             <param name="pluginurl" value="http://www.apple.com/quicktime/download/" />
@@ -884,11 +884,11 @@ class core_media_player_qt extends core_media_player {
             <param name="autoplay" value="false" />
             <param name="autostart" value="false" />
             <param name="scale" value="aspect" />
-        <!--<![endif]-->
+        <![endif]-->
             $fallback
-        <!--[if !IE]>-->
+        <!--[if !IE]>
         </object>
-        <!--<![endif]-->
+        <![endif]-->
     </object>
 </span>
 OET;
@@ -934,16 +934,16 @@ class core_media_player_rm extends core_media_player {
             data="$url" width="$width" height="$height"">
         <param name="src" value="$url" />
         <param name="controls" value="All" />
-        <!--[if !IE]>-->
+        <!--[if !IE]>
         <object title="$info" type="audio/x-pn-realaudio-plugin"
                 data="$url" width="$width" height="$height">
             <param name="src" value="$url" />
             <param name="controls" value="All" />
-        <!--<![endif]-->
+        <![endif]-->
             $fallback
-        <!--[if !IE]>-->
+        <!--[if !IE]>
         </object>
-        <!--<![endif]-->
+        <![endif]-->
   </object>
 </span>
 OET;
@@ -989,7 +989,7 @@ class core_media_player_swf extends core_media_player {
     <param name="scale" value="aspect" />
     <param name="base" value="." />
     <param name="allowscriptaccess" value="never" />
-<!--[if !IE]>-->
+<!--[if !IE]>
     <object type="application/x-shockwave-flash" data="$url" width="$width" height="$height">
       <param name="controller" value="true" />
       <param name="autoplay" value="true" />
@@ -997,11 +997,11 @@ class core_media_player_swf extends core_media_player {
       <param name="scale" value="aspect" />
       <param name="base" value="." />
       <param name="allowscriptaccess" value="never" />
-<!--<![endif]-->
+<![endif]-->
 $fallback
-<!--[if !IE]>-->
+<!--[if !IE]>
     </object>
-<!--<![endif]-->
+<![endif]-->
   </object>
 </span>
 OET;
