@@ -47,6 +47,18 @@ other = html';
     $setting = new editor_atto_toolbar_setting('editor_atto/toolbar', $name, $desc, $default);
 
     $settings->add($setting);
+
+    $name = new lang_string('colours', 'editor_atto');
+    $desc = new lang_string('colours_desc', 'editor_atto');
+    $default = '#FFFFFF
+#EF4540
+#FFCF35
+#98CA3E
+#7D9FD3
+#333333';
+    $setting = new admin_setting_configtextarea('editor_atto/colours', $name, $desc, $default);
+
+    $settings->add($setting);
 }
 
 $name = new lang_string('autosavefrequency', 'editor_atto');

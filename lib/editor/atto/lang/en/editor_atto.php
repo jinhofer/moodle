@@ -46,3 +46,5 @@ $string['plugin_title_shortcut'] = '{$a->title} [{$a->shortcut}]';
 $string['recover'] = 'Recover';
 $string['infostatus'] = 'Information';
 $string['warningstatus'] = 'Warning';
+$string['colours'] = 'Available colours';
+$string['colours_desc'] = 'Colours that will be available for use within the editor.';
