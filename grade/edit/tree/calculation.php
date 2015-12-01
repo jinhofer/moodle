@@ -70,15 +70,62 @@ if ($mform->is_cancelled()) {
 
 }
 
+if ($id) {
+    if (!$grade_category = grade_category::fetch(array('id'=>$grade_item->iteminstance, 'courseid'=>$course->id))) {
+        print_error('invalidcategory');
+    }
+    $grade_category->apply_forced_settings();
+    $category = $grade_category->get_record_data();
+    // set parent
+    $category->parentcategory = $grade_category->parent;
+    $grade_item = $grade_category->load_grade_item();
+    // nomalize coef values if needed
+    $parent_category = $grade_category->get_parent_category();
+
+    foreach ($grade_item->get_record_data() as $key => $value) {
+        $category->{"grade_item_$key"} = $value;
+    }
+
+    $decimalpoints = $grade_item->get_decimals();
+
+    $category->grade_item_grademax   = format_float($category->grade_item_grademax, $decimalpoints);
+}
 $calculation = calc_formula::localize($grade_item->calculation);
 $calculation = grade_item::denormalize_formula($calculation, $grade_item->courseid);
-$mform->set_data(array('courseid'=>$grade_item->courseid, 'calculation'=>$calculation, 'id'=>$grade_item->id, 'itemname'=>$grade_item->itemname));
+$mform->set_data(array('courseid'=>$grade_item->courseid, 'calculation'=>$calculation, 'id'=>$grade_item->id, 'itemname'=>$grade_item->itemname, 'grade_item_grademax'=>$category->grade_item_grademax));
 
 $errors = array();
 
 if ($data = $mform->get_data()) {
     $calculation = calc_formula::unlocalize($data->calculation);
     $grade_item->set_calculation($calculation);
+    grade_category::set_properties($grade_category, $data);
+    $grade_category->update();
+    $itemdata = new stdClass();
+    foreach ($data as $k => $v) {
+        if (preg_match('/grade_item_(.*)/', $k, $matches)) {
+            $itemdata->{$matches[1]} = $v;
+        }
+    }
+    if (!isset($itemdata->grademax) || $itemdata->grademax == '') {
+        $itemdata->grademax = 0;
+    }
+    $param = 'grademax';
+    if (property_exists($itemdata, $param)) {
+        $itemdata->$param = unformat_float($itemdata->$param);
+    }
+    $grade_item = $grade_category->load_grade_item();
+    $grade_item_copy = fullclone($grade_item);
+    grade_item::set_properties($grade_item, $itemdata);
+
+    if (empty($grade_item->id)) {
+        $grade_item->id = $grade_item_copy->id;
+    }
+    if (empty($grade_item->grademax) && $grade_item->grademax != '0') {
+        $grade_item->grademax = $grade_item_copy->grademax;
+    }
+
+    $grade_item->update();
 
     redirect($returnurl);
 

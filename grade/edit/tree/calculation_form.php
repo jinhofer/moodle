@@ -59,6 +59,9 @@ class edit_calculation_form extends moodleform {
         $mform->addElement('static', 'itemname', get_string('itemname', 'grades'));
         $mform->addElement('textarea', 'calculation', get_string('calculation', 'grades'), 'cols="60" rows="5"');
         $mform->addHelpButton('calculation', 'calculation', 'grades');
+        $mform->addElement('text', 'grade_item_grademax', get_string('grademax', 'grades'));
+        $mform->setType('grade_item_grademax', PARAM_RAW);
+        $mform->addHelpButton('grade_item_grademax', 'grademax', 'grades');
 
 /// hidden params
         $mform->addElement('hidden', 'id', 0);
@@ -86,6 +89,7 @@ class edit_calculation_form extends moodleform {
 
 /// perform extra validation before submission
     function validation($data, $files) {
+        global $COURSE;
         $errors = parent::validation($data, $files);
 
         $mform =& $this->_form;
@@ -98,6 +102,15 @@ class edit_calculation_form extends moodleform {
             if ($result !== true) {
                 $errors['calculation'] = $result;
             }
+        }
+
+        if (array_key_exists('grade_item_grademin', $data) and array_key_exists('grade_item_grademax', $data)) {
+            if (($data['grade_item_grademax'] != 0 OR $data['grade_item_grademin'] != 0) AND
+                ($data['grade_item_grademax'] == $data['grade_item_grademin'] OR
+                 $data['grade_item_grademax'] < $data['grade_item_grademin'])) {
+                 $errors['grade_item_grademin'] = get_string('incorrectminmax', 'grades');
+                 $errors['grade_item_grademax'] = get_string('incorrectminmax', 'grades');
+             }
         }
 
         return $errors;
