@@ -56,6 +56,8 @@ class core_html2text extends \Html2Text\Html2Text {
         // MDL-27736: Trailing spaces before newline or tab.
         $this->entSearch[] = '/[ ]+([\n\t])/';
         $this->entReplace[] = '\\1';
+        $this->entSearch[] = '/\$diff \= \$len \+ \$taglen/';
+        $this->entReplace[] = '\$diff \+= \$len \+ \$taglen';
     }
 
     /**
